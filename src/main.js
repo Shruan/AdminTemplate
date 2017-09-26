@@ -7,6 +7,15 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 
 Vue.use(ElementUI)
+Vue.directive('myfocus', {
+  // 当绑定的元素插入到DOM ...
+  insert: function (el, {value}) {
+    // 聚焦元素
+    if (value) {
+      el.focus()
+    }
+  }
+})
 
 Vue.config.productionTip = false
 
