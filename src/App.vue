@@ -13,7 +13,7 @@ export default {
     }
   },
   created () {
-
+    this.$router.push({path: '/login'})
   },
   methods: {
 
