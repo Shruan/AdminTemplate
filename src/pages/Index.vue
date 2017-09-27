@@ -1,5 +1,5 @@
 <template>
-  <div class="page-index">
+  <div class="page-index" :style="'width:' + screenWidth + 'px'">
     <nav class="index-left-nav" :style="isCollapse ? 'max-width: 64px' : ''">
       <div class="index-left-logo" :style="isCollapse ? 'max-width: 64px' : ''">
         <h2 v-if="!isCollapse" style="font-size:30px;font-weight:blod;color:#fff;padding-top:40px" class="index-left-logo-icon">LOGO</h2>
@@ -25,34 +25,6 @@
       </header>
       <div class="index-right-content">
         <router-view></router-view>
-          <el-table @cell-click="clickThisCell" align="center"
-            :data="tableData"
-            stripe
-            style="width: 100%">
-            <el-table-column
-              prop="date"
-              label="日期"
-              width="180">
-            </el-table-column>
-            <el-table-column
-              label="姓名"
-              prop="name"
-              width="180">
-              <template scope="scope">
-                <el-input v-if="scope.row.nameEdit"
-                v-myfocus="focusStatus"
-                v-model="scope.row.name" placeholder="请输入内容" @blur="saveEdit(scope.row)"></el-input>
-                <div v-else>
-                  {{scope.row.name}}
-                </div>
-                <!-- <el-button @click="handleEdit(scope.$index, scope.row)">点击</el-button> -->
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="address"
-              label="地址">
-            </el-table-column>
-          </el-table>
       </div>
     </div>
   </div>
@@ -70,58 +42,32 @@ export default {
       user: {},
       editInput: '',
       pageStyle: '',
-      focusStatus: false,
-      isCollapse: true,
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        nameEdit: false
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄',
-        nameEdit: false
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄',
-        nameEdit: false
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄',
-        nameEdit: true
-      }]
+      isCollapse: false,
+      screenWidth: document.body.clientWidth
+    }
+  },
+  mounted () {
+    const that = this
+    window.onresize = () => {
+      return (() => {
+        window.screenWidth = document.body.clientWidth
+        that.screenWidth = window.screenWidth
+      })()
+    }
+  },
+  watch: {
+    screenWidth (val) {
+      this.screenWidth = val
     }
   },
   created () {
     let height = window.innerHeight
     this.pageStyle = 'min-height:' + (height - 100) + 'px;'
+    console.log(this.screenWidth)
   },
   methods: {
-    saveEdit (data) {
-      console.log(data)
-      data.nameEdit = false
-      this.focusStatus = false
-    },
-    handleEdit (i, j) {
-      // console.log(i)
-      // console.log(j)
-    },
     changeNav () {
       this.isCollapse = !this.isCollapse
-    },
-    clickThisCell (data, index, $event) {
-      // console.log(event.srcElement.innerText)
-      // this.editInput = event.srcElement.innerText
-      if (index.property === 'name') {
-        data.nameEdit = true
-        this.focusStatus = true
-      }
-      console.log(data)
-      console.log(index)
-      // console.log(scope.row.$index)
     }
   }
 }
@@ -130,7 +76,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .index-right-content {
-    padding: 20px;
+    padding-top: 20px;
   }
   .index-left-nav {
     max-width: 200px;
@@ -155,7 +101,9 @@ export default {
     align-items: center;
   }
   .index-right {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
+    flex: 1;
+    width: 1px;
   }
   .page-index {
     display: flex;
