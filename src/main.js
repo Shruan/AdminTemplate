@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
+import store from './store/index.js'
 import axios from 'axios'
 import 'element-ui/lib/theme-default/index.css'
 
@@ -21,6 +22,13 @@ Vue.directive('myfocus', {
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
 Vue.prototype.apiUrl = 'https://api.jihe.pro'
+Vue.prototype.setUser = (user) => {
+  store.commit('user', user)
+}
+
+Vue.prototype.getUser = () => {
+  return store.state.user
+}
 
 /* eslint-disable no-new */
 new Vue({
