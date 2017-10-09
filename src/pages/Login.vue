@@ -2,7 +2,7 @@
   <div class="login">
     <div class="login-box">
       <p class="logo">
-        <!-- <img src="../../assets/logo.png" /> -->
+        <img src="../assets/logo.png"/>
       </p>
       <p class="login-input">
         <input v-model="user.username" type="text" placeholder="账号" name="username">
@@ -34,11 +34,14 @@ export default {
     }
   },
   created () {
-
+    if (window.localStorage.password) {
+      this.user.username = window.localStorage.account
+      this.user.password = window.localStorage.password
+    }
   },
   methods: {
     login () {
-      let url = this.apiUrl + '/public/admin/login'
+      let url = this.apiUrl + '/admin/login'
       let data = {
         account: this.user.username,
         password: this.user.password
@@ -46,25 +49,17 @@ export default {
       this.$http.post(url, data).then(res => {
         res = res.data
         if (res.status == '1000') {
+          window.localStorage.account = res.user.account
+          window.localStorage.password = this.user.password
+          res.user.token = res.token
+          this.setUser(res.user)
           this.$router.push({path: '/home/index'})
           this.$message.success('欢迎登陆')
-        } else if (res.status == '4001') {
-          this.$message.error('账号不存在')
-          return false
-        } else if (res.status == '4002') {
-          this.$message.error('密码错误')
-          return false
-        } else if (res.status == '4003') {
-          this.$message.error('账号为空')
-          return false
-        } else if (res.status == '4004') {
-          this.$message.error('密码为空')
-          return false
         } else {
-          this.$message.error('网络错误')
+          this.$message.error(res.msg)
         }
-      }).then(res => {
-        this.$message.error('服务器繁忙，请稍后再试')
+      }).catch(() => {
+        this.$message.error('网络错误，请稍后再试')
       })
     }
   }
@@ -112,7 +107,7 @@ export default {
     height: 40px;
     border: 2px solid #D3DCE6;
     /*background: transparent;*/
-    color: #D3DCE6;
+    color: #727e8c;
     outline: none;
     padding: 0 20px;
     box-sizing: border-box;
