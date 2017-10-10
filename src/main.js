@@ -21,7 +21,7 @@ Vue.directive('myfocus', {
 
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
-Vue.prototype.apiUrl = 'https://api.jihe.pro'
+Vue.prototype.apiUrl = 'http://www.ehpat.com'
 Vue.prototype.setUser = (user) => {
   store.commit('user', user)
 }
@@ -29,11 +29,18 @@ Vue.prototype.setUser = (user) => {
 Vue.prototype.getUser = () => {
   return store.state.user
 }
+Vue.prototype.setProgressMsg = (importProgress) => {
+  store.commit('importProgress', importProgress)
+}
+Vue.prototype.getProgressMsg = (importProgress) => {
+  return store.state.importProgress
+}
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 })
