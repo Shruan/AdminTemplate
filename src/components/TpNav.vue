@@ -45,10 +45,10 @@
           <span slot="title">日志管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/home/2321">采集库导入日志</el-menu-item>
+          <el-menu-item index="/home/codeCollectLog">采集库导入日志</el-menu-item>
           <el-menu-item index="/home/sellPatentLog">可售专利导入日志</el-menu-item>
-          <el-menu-item index="/home/1-2">SOOPAT采集日志</el-menu-item>
-          <el-menu-item index="/home/1-2">国之局采集日志</el-menu-item>
+          <el-menu-item index="/home/soopatCollectLog">SOOPAT采集日志</el-menu-item>
+          <el-menu-item index="/home/gzjCollectLog">国之局采集日志</el-menu-item>
           <el-menu-item index="/home/loginLog">用户登录日志</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
