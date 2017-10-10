@@ -8,6 +8,9 @@ import SupplierList from '@/pages/Home/SupplierList'
 import LoginLog from '@/pages/Home/LoginLog'
 import ImportPatent from '@/pages/Home/ImportPatent'
 import SellPatentLog from '@/pages/Home/SellPatentLog'
+import GzjCollectLog from '@/pages/Home/GzjCollectLog'
+import SoopatCollectLog from '@/pages/Home/SoopatCollectLog'
+import CodeCollectLog from '@/pages/Home/CodeCollectLog'
 
 Vue.use(Router)
 
@@ -28,7 +31,10 @@ export default new Router({
         { path: '/home/supplier', component: SupplierList },
         { path: '/home/loginLog', component: LoginLog },
         { path: '/home/importPatent', component: ImportPatent },
-        { path: '/home/sellPatentLog', component: SellPatentLog }
+        { path: '/home/sellPatentLog', component: SellPatentLog },
+        { path: '/home/gzjCollectLog', component: GzjCollectLog },
+        { path: '/home/soopatCollectLog', component: SoopatCollectLog },
+        { path: '/home/codeCollectLog', component: CodeCollectLog }
       ]
     }
   ]
