@@ -41,4 +41,10 @@ body,html {
 .block {
   margin: 20px 0;
 }
+.el-form-item .el-date-editor--daterange.el-input {
+  width: 100%;
+}
+.el-table__body .el-table__expanded-cell {
+  background: #fbfbfb;
+}
 </style>
