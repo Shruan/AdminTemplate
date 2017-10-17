@@ -48,7 +48,7 @@
           <el-menu-item index="/home/codeCollectLog">采集库导入日志</el-menu-item>
           <el-menu-item index="/home/sellPatentLog">可售专利导入日志</el-menu-item>
           <el-menu-item index="/home/soopatCollectLog">SOOPAT采集日志</el-menu-item>
-          <el-menu-item index="/home/gzjCollectLog">国之局采集日志</el-menu-item>
+          <el-menu-item index="/home/gzjCollectLog">国知局采集日志</el-menu-item>
           <el-menu-item index="/home/loginLog">用户登录日志</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
