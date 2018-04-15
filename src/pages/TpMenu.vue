@@ -5,21 +5,15 @@
     :default-active="nowRoute"
     :collapse="isCollapse"
     :style="pageStyle"
-    theme="dark"
+    background-color="#334257"
+    text-color="#fff"
+    active-text-color="#ffd04b"
     @open="handleOpen"
     @close="handleClose">
       <el-menu-item index="/home/index">
         <i class="el-icon-menu"></i>
         <span slot="title">检索专利</span>
       </el-menu-item>
-      <!-- <el-menu-item index="/home/importPatent">
-        <i class="el-icon-upload2"></i>
-        <span slot="title">导入专利</span>
-      </el-menu-item>
-      <el-menu-item index="/home/213">
-        <i class="el-icon-upload"></i>
-        <span slot="title">采集进度</span>
-      </el-menu-item> -->
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-upload"></i>
@@ -32,11 +26,10 @@
       <el-submenu index="2">
         <template slot="title">
           <i class="el-icon-message"></i>
-          <span slot="title">供应商　</span>
+          <span slot="title">供应商&nbsp;&nbsp;</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="/home/supplier">供应商管理</el-menu-item>
-          <!-- <el-menu-item index="/home/1-2">供应商信息</el-menu-item> -->
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="3">
@@ -52,14 +45,13 @@
           <el-menu-item index="/home/loginLog">用户登录日志</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-submenu index="4" v-if="user.type == 1">
+      <el-submenu index="4">
         <template slot="title">
           <i class="el-icon-setting"></i>
           <span slot="title">系统设置</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="/home/manage">用户管理</el-menu-item>
-          <!-- <el-menu-item index="/home/1-2">系统管理</el-menu-item> -->
         </el-menu-item-group>
       </el-submenu>
     </el-menu>
@@ -67,20 +59,22 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
-  name: 'nav',
+  name: 'srn-menu',
   props: {
-    isCollapse: Boolean,
     pageStyle: String
   },
   data () {
     return {
-      user: {},
       nowRoute: ''
     }
   },
-  created () {
-    this.user = this.getUser()
+  computed: {
+    ...mapState('globalModule', [
+      'user',
+      'isCollapse'
+    ])
   },
   methods: {
     handleOpen (key, keyPath) {
