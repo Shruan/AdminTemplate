@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 export default {
   name: 'Login',
   data () {
@@ -40,27 +42,33 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('globalModule', [
+      '_user'
+    ]),
     login () {
-      let url = this.apiUrl + '/admin/login'
+      // let url = this.apiUrl + '/admin/login'
       let data = {
         account: this.user.username,
         password: this.user.password
       }
-      this.$http.post(url, data).then(res => {
-        res = res.data
-        if (res.status == '1000') {
-          window.localStorage.account = res.user.account
-          window.localStorage.password = this.user.password
-          res.user.token = res.token
-          this.setUser(res.user)
-          this.$router.push({path: '/home/index'})
-          this.$message.success('欢迎登陆')
-        } else {
-          this.$message.error(res.msg)
-        }
-      }).catch(() => {
-        this.$message.error('网络错误，请稍后再试')
-      })
+      this._user(data)
+      // this.$http.post(url, data).then(res => {
+      //   res = res.data
+      //   if (res.status == '1000') {
+      //     window.localStorage.account = res.user.account
+      //     window.localStorage.password = this.user.password
+      //     res.user.token = res.token
+      //     this.setUser(res.user)
+      //     this.$router.push({path: '/home/index'})
+      //     this.$message.success('欢迎登陆')
+      //   } else {
+      //     this.$message.error(res.msg)
+      //   }
+      // }).catch(() => {
+      //   this.$message.error('网络错误，请稍后再试')
+      // })
+      this.$router.push({path: '/home/index'})
+      this.$message.success('欢迎登陆')
     }
   }
 }

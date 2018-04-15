@@ -4,7 +4,6 @@ import Login from '@/pages/Login'
 import Index from '@/pages/Index'
 import Home from '@/pages/Home/Index'
 
-
 Vue.use(Router)
 
 export default new Router({

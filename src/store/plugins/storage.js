@@ -1,4 +1,4 @@
-const prefix = '[smy-web] - '
+const prefix = '[srn-web] - '
 
 export default {
   namespace: '',

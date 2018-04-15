@@ -1,86 +1,94 @@
 <template>
-  <div class="page-index" :style="'width:' + screenWidth + 'px'">
+  <div class="page-index">
     <nav class="index-left-nav" :style="isCollapse ? 'max-width: 64px' : ''">
       <div class="index-left-logo" :style="isCollapse ? 'max-width: 64px' : ''">
-        <h2 v-if="!isCollapse" style="font-size:30px;font-weight:blod;color:#fff;padding-top:40px" class="index-left-logo-icon">LOGO</h2>
-        <h2 v-else style="font-size:30px;font-weight:blod;color:#fff;padding-top:40px" class="index-left-logo-icon">L</h2>
+        <h2 v-if="!isCollapse" class="index-left-logo-icon logo-title">易航</h2>
+        <h2 v-else style="" class="index-left-logo-icon logo-title">航</h2>
       </div>
-      <tp-nav :isCollapse="isCollapse" :pageStyle="pageStyle"></tp-nav>
+      <TpMenu :pageStyle="pageStyle" />
     </nav>
     <div class="index-right">
-      <header class="index-right-header">
-        <div class="btn-icon" @click="changeNav">
-          <i class="el-icon-menu"></i>
-        </div>
-        <div class="">
-          <el-dropdown trigger="click">
-            <span class="el-dropdown-link">
-              qiushiyuan{{user}}<i class="el-icon-caret-bottom el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>黄金糕</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
-      </header>
+        <HeadNav />
       <div class="index-right-content">
-        <router-view></router-view>
+        <router-view />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import TpNav from '@/components/TpNav'
+import HeadNav from './HeadNav'
+import TpMenu from './TpMenu'
+import { mapState } from 'vuex'
 export default {
   components: {
-    TpNav
+    TpMenu,
+    HeadNav
   },
-  name: 'nav',
+  name: 'index',
   data () {
     return {
       user: {},
-      editInput: '',
-      pageStyle: '',
-      isCollapse: false,
-      screenWidth: document.body.clientWidth
+      pageStyle: ''
+      // screenWidth: document.body.clientWidth
     }
   },
-  mounted () {
-    const that = this
-    window.onresize = () => {
-      return (() => {
-        window.screenWidth = document.body.clientWidth
-        that.screenWidth = window.screenWidth
-      })()
-    }
+  computed: {
+    ...mapState('globalModule', [
+      'isCollapse'
+    ])
   },
-  watch: {
-    screenWidth (val) {
-      this.screenWidth = val
-    }
-  },
+  // mounted () {
+  //   const that = this
+  //   window.onresize = () => {
+  //     return (() => {
+  //       window.screenWidth = document.body.clientWidth
+  //       that.screenWidth = window.screenWidth
+  //     })()
+  //   }
+  // },
+  // watch: {
+  //   screenWidth (val) {
+  //     this.screenWidth = val
+  //   }
+  // },
   created () {
+    // console.log(this.isCollapse)
+    // this.user = this.getUser()
     let height = window.innerHeight
     this.pageStyle = 'min-height:' + (height - 100) + 'px;'
-    console.log(this.screenWidth)
+    // console.log(this.screenWidth)
   },
   methods: {
-    changeNav () {
-      this.isCollapse = !this.isCollapse
-    }
+
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
+  .user-box {
+    margin: 0 20px 0 13px;
+    text-align:left;
+    align-self:center;
+    line-height: 16px;
+  }
+  .el-dropdown-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  .el-dropdown-link img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+  }
   .index-right-content {
     padding-top: 20px;
   }
   .index-left-nav {
     max-width: 200px;
-    height: 100%;
     background: #334257;
     -webkit-transition: all cubic-bezier(0.39, 0.58, 0.57, 1) 520ms;
   }
@@ -114,5 +122,11 @@ export default {
     width: 20px;
     height: 20px;
     display: inline-block;
+  }
+  .logo-title {
+    font-size: 30px;
+    font-weight: blod;
+    color: #fff;
+    padding-top: 40px;
   }
 </style>
