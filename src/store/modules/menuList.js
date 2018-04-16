@@ -33,10 +33,6 @@ export default [
     icon: 'el-icon-picture',
     key: 'HomePage',
     children: [
-      // {
-      //   url: '/userDetail',
-      //   name: '浏览我的主页'
-      // },
       {
         url: '/home/editSlide',
         name: '设置个人主页'
@@ -45,7 +41,7 @@ export default [
   },
   {
     name: '小程序　',
-    icon: 'el-icon-picture',
+    icon: 'el-icon-message',
     key: 'MiniProgram',
     children: [
       {
@@ -55,14 +51,6 @@ export default [
       {
         url: '/home/editSlide',
         name: '设置个人主页'
-      },
-      {
-        url: '/home/aboutUs',
-        name: '关于我们'
-      },
-      {
-        url: '/home/userNotification',
-        name: '用户需知'
       }
     ]
   },
@@ -74,7 +62,7 @@ export default [
   },
   {
     url: '/home/userInfo',
-    name: '个人信息',
+    name: '系统信息',
     icon: 'el-icon-setting'
   }
 ]
