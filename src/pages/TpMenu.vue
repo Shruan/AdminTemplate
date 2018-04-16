@@ -83,8 +83,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .el-menu-vertical-demo:not(.el-menu--collapse) {
-    width: 200px;
-    /*min-height: 1000px;*/
-  }
+  /* .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 180px!important;
+  } */
 </style>

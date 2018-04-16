@@ -1,13 +1,13 @@
 <template>
   <div class="shy__box">
-    <nav class="shy__layout-nav" :style="isCollapse ? 'max-width: 64px' : ''">
-      <div class="shy__logo" :style="isCollapse ? 'max-width: 64px' : ''">
+    <nav class="shy__layout-nav" :style="isCollapse ? 'max-width: 64px;' : ''">
+      <div class="shy__logo" :style="isCollapse ? 'width: 64px' : ''">
         <h2 v-if="!isCollapse" class="shy__logo-icon logo-title">Admin</h2>
         <h2 v-else class="shy__logo-icon logo-title">A</h2>
       </div>
       <TpMenu :pageStyle="pageStyle" />
     </nav>
-    <div class="shy__layout-right">
+    <div class="shy__layout-right" :style="isCollapse ? 'margin-left: 60px' : ''">
         <HeadNav />
       <div class="shy__layout-content">
         <router-view />
@@ -67,6 +67,38 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+  .shy__layout-right-header {
+    height: 50px;
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    align-items: center;
+  }
+  .shy__layout-right {
+    transition: margin-left .28s;
+    margin-left: 180px;
+    flex: 0 1 auto;
+    flex: 1;
+    width: 1px;
+    height: 100%;
+  }
+  .shy__box {
+    display: flex;
+    background: #f9f9f9;
+    height: 100%;
+  }
+  .shy__layout-content {
+    padding: 20px;
+  }
+  .shy__layout-nav {
+    position: fixed;
+    overflow: hidden;
+    /* max-width: 180px; */
+    /* -webkit-transition: all cubic-bezier(0.39, 0.58, 0.57, 1) 520ms; */
+  }
   .user-box {
     margin: 0 20px 0 13px;
     text-align:left;
@@ -84,18 +116,14 @@ export default {
     height: 28px;
     border-radius: 50%;
   }
-  .shy__layout-content {
-    padding: 20px;
-  }
-  .shy__layout-nav {
-    max-width: 200px;
-    background: #334257;
-    -webkit-transition: all cubic-bezier(0.39, 0.58, 0.57, 1) 520ms;
-  }
+
   .shy__logo {
-    width: 200px;
+    background: #334257;
+    width: 179px;
     height: 100px;
     text-align: center;
+    border-right: 1px solid #fff;
+    -webkit-transition: all .3s ease-in-out;
   }
   .clearfix:before, .clearfix:after {
     display: table;
@@ -104,25 +132,7 @@ export default {
   .clearfix:after {
     clear: both
   }
-  .shy__layout-right-header {
-    height: 50px;
-    background: #fff;
-    box-shadow: 0 1px 1px rgba(0,0,0,.1);
-    text-align: left;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 20px;
-    align-items: center;
-  }
-  .shy__layout-right {
-    flex: 0 1 auto;
-    flex: 1;
-    width: 1px;
-  }
-  .shy__box {
-    display: flex;
-    background: #f9f9f9;
-  }
+
   .btn-icon {
     cursor: pointer;
     width: 20px;
