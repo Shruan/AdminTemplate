@@ -1,15 +1,15 @@
 <template>
-  <div class="page-index">
-    <nav class="index-left-nav" :style="isCollapse ? 'max-width: 64px' : ''">
-      <div class="index-left-logo" :style="isCollapse ? 'max-width: 64px' : ''">
-        <h2 v-if="!isCollapse" class="index-left-logo-icon logo-title">易航</h2>
-        <h2 v-else style="" class="index-left-logo-icon logo-title">航</h2>
+  <div class="shy__box">
+    <nav class="shy__layout-nav" :style="isCollapse ? 'max-width: 64px' : ''">
+      <div class="shy__logo" :style="isCollapse ? 'max-width: 64px' : ''">
+        <h2 v-if="!isCollapse" class="shy__logo-icon logo-title">Admin</h2>
+        <h2 v-else class="shy__logo-icon logo-title">A</h2>
       </div>
       <TpMenu :pageStyle="pageStyle" />
     </nav>
-    <div class="index-right">
+    <div class="shy__layout-right">
         <HeadNav />
-      <div class="index-right-content">
+      <div class="shy__layout-content">
         <router-view />
       </div>
     </div>
@@ -84,21 +84,27 @@ export default {
     height: 28px;
     border-radius: 50%;
   }
-  .index-right-content {
-    padding-top: 20px;
+  .shy__layout-content {
+    padding: 20px;
   }
-  .index-left-nav {
+  .shy__layout-nav {
     max-width: 200px;
     background: #334257;
     -webkit-transition: all cubic-bezier(0.39, 0.58, 0.57, 1) 520ms;
   }
-  .index-left-logo {
+  .shy__logo {
     width: 200px;
     height: 100px;
+    text-align: center;
   }
-  .index-left-logo-icon {
+  .clearfix:before, .clearfix:after {
+    display: table;
+    content: "";
   }
-  .index-right-header {
+  .clearfix:after {
+    clear: both
+  }
+  .shy__layout-right-header {
     height: 50px;
     background: #fff;
     box-shadow: 0 1px 1px rgba(0,0,0,.1);
@@ -108,12 +114,12 @@ export default {
     padding: 0 20px;
     align-items: center;
   }
-  .index-right {
+  .shy__layout-right {
     flex: 0 1 auto;
     flex: 1;
     width: 1px;
   }
-  .page-index {
+  .shy__box {
     display: flex;
     background: #f9f9f9;
   }

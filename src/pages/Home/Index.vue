@@ -1,225 +1,302 @@
 <template>
   <div class="home-index">
-    <div class="normalSeach-box">
-      <div>
-        <el-input
-          placeholder="请输入要搜索的专利名关键字"
-          prefix-icon="search"
-          v-model="form.name">
-        </el-input>
-        <el-button type="primary" @click="seach" style="margin-left: 15px">搜索</el-button>
-        <el-button @click="showMore">筛选<i class="el-icon--right" :class="iconChange"></i></el-button>
+    <el-card shadow="hover">
+      <div slot="header" class="clearfix">
+        <span>个人中心</span>
+        <el-button style="float: right; padding: 3px 0" type="text">提示信息</el-button>
       </div>
-      <div>
-        <el-button type="primary">
-          <a :href="apiUrl + '/patent/adminlist/excel?title=' + form.name
-           + '&code=' + form.code
-            + '&supplier_id=' + form.supplier_id
-             + '&type=' + form.patentType
-              + '&changed=' + form.isRecord
-               + '&status=' + form.patentStatus
-                + '&add_time_s=' + (form.add_time[0] ? form.add_time[0] : '')
-                 + '&add_time_e=' + (form.add_time[1] ? form.add_time[1] : '')
-                  + '&update_time_s=' + (form.update_time[0] ? form.update_time[0] : '')
-                   + '&update_time_e=' + (form.update_time[1] ? form.update_time[1] : '')
-                    + '&is_sell=' + form.isSell"
-                    target="_blank"><font color="#fff">导出检索结果</font></a>
-        </el-button>
-        <el-button @click="collectionType('gzj')">国知局采集</el-button>
-        <el-button @click="collectionType('soopat')">SOOPAT采集</el-button>
-        <el-button @click="showSelectEdit">批量编辑</el-button>
-      </div>
-    </div>
-    <div class="moreSeach-box" v-if="isShowMore">
-      <el-form ref="form" :model="form" label-width="100px" class="form-box">
-        <el-form-item label="专利名关键字">
-          <el-input v-model="form.name" placeholder="请输入专利名关键字"></el-input>
-        </el-form-item>
-        <el-form-item label="专利号">
-          <el-input v-model="form.code" placeholder="请输入专利号"></el-input>
-        </el-form-item>
-        <el-form-item label="录入时间">
-          <el-date-picker
-            v-model="form.add_time"
-            format="yyyy-MM-dd"
-            type="daterange"
-            placeholder="选择日期范围">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="是否可售">
-          <el-radio-group v-model="form.isSell">
-            <el-radio label="10">是</el-radio>
-            <el-radio label="20">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="供应商">
-          <el-select v-model="form.supplier_id" clearable placeholder="请选择供应商">
-            <el-option :label="item.name" :value="item.id" :key="item.id" v-for="item in supplierList"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="更新时间">
-          <el-date-picker
-            v-model="form.update_time"
-            format="yyyy-MM-dd"
-            type="daterange"
-            placeholder="选择日期范围">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="专利类型">
-          <el-select v-model="form.patentType" clearable placeholder="请选择专利类型">
-            <el-option label="发明专利" value="1"></el-option>
-            <el-option label="实用新型" value="2"></el-option>
-            <el-option label="外观专利" value="3"></el-option>
-            <el-option label="PCT发明" value="4"></el-option>
-            <el-option label="PCT实用" value="5"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="变更记录">
-          <el-radio-group v-model="form.isRecord">
-            <el-radio label="10">有</el-radio>
-            <el-radio label="20">没有</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="法律状态">
-          <el-select v-model="form.patentStatus" clearable placeholder="请选择法律状态">
-            <el-option label="授权未下证" value="授权未下证"></el-option>
-            <el-option label="专利权维持" value="专利权维持"></el-option>
-            <el-option label="等年费滞纳金" value="等年费滞纳金"></el-option>
-            <el-option label="视为放弃，等恢复" value="视为放弃，等恢复"></el-option>
-            <el-option label="审核中" value="审核中"></el-option>
-            <el-option label="无效" value="无效"></el-option>
-            <el-option label="其他" value="其他"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="seach">搜索</el-button>
-          <el-button  @click="reset">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <el-table
-      v-loading="loading"
-      element-loading-text="加载中,请稍后"
-      border
-      @select="selectData"
-      @select-all="selectData"
-      :data="patentList"
-      style="width: 100%"
-      @cell-click="clickThisCell"
-      class="table-box">
-      <el-table-column
-        type="selection"
-        align="center"
-        width="55">
-      </el-table-column>
-      <el-table-column
-        prop="code"
-        label="专利号"
-        width="150"
-        align="center">
-      </el-table-column>
-      <el-table-column
-        prop="title"
-        label="专利名称"
-        align="center"
-        minWidth="300">
-        <template slot-scope="scope">
-          <a :href="apiUrl + '/detail/' + scope.row.code" target="-_blank">{{scope.row.title}}</a>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="type"
-        label="专利类型"
-        align="center"
-        width="95">
-      </el-table-column>
-      <el-table-column
-        prop="get_certify"
-        label="是否下证"
-        align="center"
-        width="95">
-        <template slot-scope="scope">
-          {{scope.row.get_certify === 10 ? '是' : '否'}}
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="是否可售"
-        prop="is_sell"
-        align="center"
-        width="100">
-        <template slot-scope="scope">
-          <div v-if="!scope.row.is_sellEdit" style="cursor: pointer">
-            {{scope.row.is_sell}}
-          </div>
-          <el-select v-model="scope.row.is_sell"
-            @change="saveEdit(scope.row, 'is_sellEdit')"
-            v-else>
-            <el-option label="是" value="10"></el-option>
-            <el-option label="否" value="20"></el-option>
-          </el-select>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="cost_price"
-        label="成本价"
-        align="center"
-        width="105">
-        <template slot-scope="scope">
-          <div v-if="!scope.row.cost_priceEdit" style="cursor: pointer">
-            {{scope.row.cost_price}}
-          </div>
-          <el-input v-else
-            id="input"
-            v-model="scope.row.cost_price"
-            placeholder="请输入内容"
-            @blur="saveEdit(scope.row)">
+      <div class="search-top">
+        <div class="search-top-left">
+          <el-input
+            class="seach-top-keyword"
+            size="small"
+            placeholder="请输入要搜索的专利名关键字"
+            v-model="form.name">
+            <i slot="suffix"
+              class="el-input__icon el-icon-search"
+              @click="seach"
+            />
           </el-input>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="status"
-        label="法律状态"
-        align="center"
-        width="150">
-      </el-table-column>
-      <el-table-column
-        prop="changed"
-        label="变更记录"
-        align="center"
-        width="70">
-      </el-table-column>
-      <el-table-column
-        prop="supplier_id"
-        label="供应商"
-        align="center"
-        width="70">
-        <template slot-scope="scope">
-          <el-button size="small" type="text" @click="useSupplierMsg(scope.row)">明细</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="add_time"
-        label="录入时间"
-        align="center"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="update_time"
-        label="国知局采集时间"
-        align="center"
-        width="180">
-      </el-table-column>
-    </el-table>
-    <div class="block">
-      <el-pagination
-        @current-change="changePage"
-        @size-change="pageSizeChange"
-        :page-size="Number(pageSize)"
-        layout="sizes, total, prev, pager, next"
-        :page-sizes="[10, 20, 30, 50, 100, 200, 300, 500, 1000]"
-        :total="Number(dataTotal)">
-      </el-pagination>
-    </div>
+          <el-button
+              class="seach-top-detail"
+              size="small"
+              @click="showMore"
+              style="margin-left: 15px; display: inline-block"
+            >
+            筛选<i class="el-icon--right" :class="iconChange"/>
+          </el-button>
+        </div>
+        <div>
+          <el-button
+            size="small"
+            type="primary"
+          >
+            <a :href="apiUrl + '/patent/adminlist/excel?title=' + form.name
+             + '&code=' + form.code
+              + '&supplier_id=' + form.supplier_id
+               + '&type=' + form.patentType
+                + '&changed=' + form.isRecord
+                 + '&status=' + form.patentStatus
+                  + '&add_time_s=' + (form.add_time[0] ? form.add_time[0] : '')
+                   + '&add_time_e=' + (form.add_time[1] ? form.add_time[1] : '')
+                    + '&update_time_s=' + (form.update_time[0] ? form.update_time[0] : '')
+                     + '&update_time_e=' + (form.update_time[1] ? form.update_time[1] : '')
+                      + '&is_sell=' + form.isSell"
+                      target="_blank"><font color="#fff">导出检索结果</font></a>
+          </el-button>
+          <el-button size="small" @click="collectionType('gzj')">国知局采集</el-button>
+          <el-button size="small" @click="collectionType('soopat')">SOOPAT采集</el-button>
+          <el-button size="small" @click="showSelectEdit">批量编辑</el-button>
+        </div>
+      </div>
+      <div class="search-detail" v-if="isShowMore">
+        <el-form
+          ref="form"
+          :model="form"
+          label-width="80px"
+          class="form-box"
+          >
+          <el-form-item label="专利名">
+            <el-input
+              class="search-select"
+              size="small"
+              v-model="form.name"
+              placeholder="请输入专利名关键字"
+            />
+          </el-form-item>
+          <el-form-item label="专利号">
+            <el-input
+              class="search-select"
+              size="small"
+              v-model="form.code"
+              placeholder="请输入专利号"
+            />
+          </el-form-item>
+          <el-form-item label="录入时间">
+            <el-date-picker
+              size="small"
+              type="daterange"
+              format="yyyy-MM-dd"
+                class="search-select"
+              v-model="form.add_time"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              placeholder="选择日期范围"
+            />
+          </el-form-item>
+          <el-form-item label="是否可售">
+            <el-radio-group v-model="form.isSell">
+              <el-radio label="10">是</el-radio>
+              <el-radio label="20">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="供应商">
+            <el-select
+              class="search-select"
+              size="small"
+              v-model="form.supplier_id"
+              clearable
+              placeholder="请选择供应商"
+            >
+              <el-option
+                :label="item.name"
+                :value="item.id"
+                :key="item.id"
+                v-for="item in supplierList"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="更新时间">
+            <el-date-picker
+              size="small"
+              type="daterange"
+              format="yyyy-MM-dd"
+              class="search-select"
+              placeholder="选择日期范围"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              v-model="form.update_time"
+            />
+          </el-form-item>
+          <el-form-item label="专利类型">
+            <el-select
+              clearable
+              size="small"
+              class="search-select"
+              v-model="form.patentType"
+              placeholder="请选择专利类型"
+            >
+              <el-option label="发明专利" value="1" />
+              <el-option label="实用新型" value="2" />
+              <el-option label="外观专利" value="3" />
+              <el-option label="PCT发明" value="4" />
+              <el-option label="PCT实用" value="5" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="变更记录">
+            <el-radio-group
+              size="small"
+              v-model="form.isRecord">
+              <el-radio label="10">有</el-radio>
+              <el-radio label="20">没有</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="法律状态">
+            <el-select
+              class="search-select"
+              size="small"
+              v-model="form.patentStatus"
+              clearable
+              placeholder="请选择法律状态"
+            >
+              <el-option label="授权未下证" value="授权未下证" />
+              <el-option label="专利权维持" value="专利权维持" />
+              <el-option label="等年费滞纳金" value="等年费滞纳金" />
+              <el-option label="视为放弃，等恢复" value="视为放弃，等恢复" />
+              <el-option label="审核中" value="审核中" />
+              <el-option label="无效" value="无效" />
+              <el-option label="其他" value="其他" />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              size="small"
+              type="primary"
+              @click="seach">
+              搜索
+            </el-button>
+            <el-button
+              size="small"
+              @click="reset">
+              重置
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <el-table
+        v-loading="loading"
+        element-loading-text="加载中,请稍后"
+        border
+        @select="selectData"
+        @select-all="selectData"
+        :data="patentList"
+        style="width: 100%"
+        @cell-click="clickThisCell"
+        class="table-box">
+        <el-table-column
+          type="selection"
+          align="center"
+          width="55">
+        </el-table-column>
+        <el-table-column
+          prop="code"
+          label="专利号"
+          width="150"
+          align="center">
+        </el-table-column>
+        <el-table-column
+          prop="title"
+          label="专利名称"
+          align="center"
+          minWidth="300">
+          <template slot-scope="scope">
+            <a :href="apiUrl + '/detail/' + scope.row.code" target="-_blank">{{scope.row.title}}</a>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="type"
+          label="专利类型"
+          align="center"
+          width="95">
+        </el-table-column>
+        <el-table-column
+          prop="get_certify"
+          label="是否下证"
+          align="center"
+          width="95">
+          <template slot-scope="scope">
+            {{scope.row.get_certify === 10 ? '是' : '否'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否可售"
+          prop="is_sell"
+          align="center"
+          width="100">
+          <template slot-scope="scope">
+            <div v-if="!scope.row.is_sellEdit" style="cursor: pointer">
+              {{scope.row.is_sell}}
+            </div>
+            <el-select v-model="scope.row.is_sell"
+              @change="saveEdit(scope.row, 'is_sellEdit')"
+              v-else>
+              <el-option label="是" value="10"></el-option>
+              <el-option label="否" value="20"></el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="cost_price"
+          label="成本价"
+          align="center"
+          width="105">
+          <template slot-scope="scope">
+            <div v-if="!scope.row.cost_priceEdit" style="cursor: pointer">
+              {{scope.row.cost_price}}
+            </div>
+            <el-input v-else
+              id="input"
+              v-model="scope.row.cost_price"
+              placeholder="请输入内容"
+              @blur="saveEdit(scope.row)">
+            </el-input>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="status"
+          label="法律状态"
+          align="center"
+          width="150">
+        </el-table-column>
+        <el-table-column
+          prop="changed"
+          label="变更记录"
+          align="center"
+          width="80">
+        </el-table-column>
+        <el-table-column
+          prop="supplier_id"
+          label="供应商"
+          align="center"
+          width="70">
+          <template slot-scope="scope">
+            <el-button size="small" type="text" @click="useSupplierMsg(scope.row)">明细</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="add_time"
+          label="录入时间"
+          align="center"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="update_time"
+          label="国知局采集时间"
+          align="center"
+          width="180">
+        </el-table-column>
+      </el-table>
+      <div class="block">
+        <el-pagination
+          @current-change="changePage"
+          @size-change="pageSizeChange"
+          :page-size="Number(pageSize)"
+          layout="sizes, total, prev, pager, next"
+          :page-sizes="[10, 20, 30, 50, 100, 200, 300, 500, 1000]"
+          :total="Number(dataTotal)">
+        </el-pagination>
+      </div>
+    </el-card>
     <el-dialog
       title="供应商详情"
       :visible.sync="isShowSupplier"
@@ -765,47 +842,50 @@ export default {
     },
     seach () {
       this.loading = true
-      if (!this.form.name && !this.form.code && !this.form.update_time && !this.form.isSell && !this.form.supplier_id && !this.form.add_time && !this.form.patentType && !this.form.patentStatus && !this.form.isRecord) {
-        this.isSeach = false
-        this.getPatentList()
-      } else {
-        this.isSeach = true
-        let url = this.apiUrl + '/patent/adminlist/' + this.page + '/' + this.pageSize
-        let header = {
-          'X-TOKEN': this.user.token,
-          'X-USER-ID': this.user.id
-        }
-        let data = {
-          title: this.form.name,
-          code: this.form.code,
-          is_sell: this.form.isSell,
-          supplier_id: this.form.supplier_id,
-          add_time_s: this.form.add_time[0],
-          add_time_e: this.form.add_time[1],
-          update_time_s: this.form.update_time[0],
-          update_time_e: this.form.update_time[1],
-          type: this.form.patentType,
-          status: this.form.patentStatus,
-          changed: this.form.isRecord
-        }
-        this.$http.get(url, {params: data, headers: header}).then(res => {
-          res = res.data
-          if (res) {
-            let patentList = res.data
-            patentList.forEach((value, key, arr) => {
-              arr[key].is_sellEdit = false
-              arr[key].cost_priceEdit = false
-              arr[key].changedName = arr[key].changed === 10 ? '有' : '没有'
-            })
-            this.patentList = patentList
-            this.dataTotal = res.total
-            this.loading = false
-            console.log(this.patentList)
-          }
-        }).catch(() => {
-          this.$message.error('网络错误，请稍后再试')
-        })
-      }
+      setTimeout(() => {
+        this.loading = false
+      }, 500)
+      // if (!this.form.name && !this.form.code && !this.form.update_time && !this.form.isSell && !this.form.supplier_id && !this.form.add_time && !this.form.patentType && !this.form.patentStatus && !this.form.isRecord) {
+      //   this.isSeach = false
+      //   this.getPatentList()
+      // } else {
+      //   this.isSeach = true
+      //   let url = this.apiUrl + '/patent/adminlist/' + this.page + '/' + this.pageSize
+      //   let header = {
+      //     'X-TOKEN': this.user.token,
+      //     'X-USER-ID': this.user.id
+      //   }
+      //   let data = {
+      //     title: this.form.name,
+      //     code: this.form.code,
+      //     is_sell: this.form.isSell,
+      //     supplier_id: this.form.supplier_id,
+      //     add_time_s: this.form.add_time[0],
+      //     add_time_e: this.form.add_time[1],
+      //     update_time_s: this.form.update_time[0],
+      //     update_time_e: this.form.update_time[1],
+      //     type: this.form.patentType,
+      //     status: this.form.patentStatus,
+      //     changed: this.form.isRecord
+      //   }
+      //   this.$http.get(url, {params: data, headers: header}).then(res => {
+      //     res = res.data
+      //     if (res) {
+      //       let patentList = res.data
+      //       patentList.forEach((value, key, arr) => {
+      //         arr[key].is_sellEdit = false
+      //         arr[key].cost_priceEdit = false
+      //         arr[key].changedName = arr[key].changed === 10 ? '有' : '没有'
+      //       })
+      //       this.patentList = patentList
+      //       this.dataTotal = res.total
+      //       this.loading = false
+      //       console.log(this.patentList)
+      //     }
+      //   }).catch(() => {
+      //     this.$message.error('网络错误，请稍后再试')
+      //   })
+      // }
     }
   }
 }
@@ -813,25 +893,24 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .normalSeach-box {
+  .search-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 0 0 20px;
+    box-sizing: border-box;
   }
-  .normalSeach-box .el-input {
+  .search-top .seach-top-keyword {
+    display: inline-block;
     width: 300px;
   }
-  .moreSeach-box {
+  .search-detail {
+    box-sizing: border-box;
     position: relative;
     width: 100%;
-    padding: 0 20px;
   }
-  .el-input, .el-select, .el-radio-group {
-    width: 200px;
-  }
-  .table-box .el-input, .el-select, .el-radio-group {
-    width: 100%;
+  .search-select {
+    width: 100%
   }
   .form-box {
     display: flex;
@@ -839,7 +918,7 @@ export default {
     margin-top: 10px;
   }
   .el-form-item {
-    width: 300px;
+    width: 270px;
   }
   .dialog .table-box .el-form-item {
     width: 200px;

@@ -1,5 +1,5 @@
 <template>
-  <header class="index-right-header">
+  <header class="shy__layout-right-header">
     <div class="btn-icon" @click="changeNav">
       <i class="el-icon-menu"></i>
     </div>
