@@ -10,50 +10,35 @@
     active-text-color="#ffd04b"
     @open="handleOpen"
     @close="handleClose">
-      <el-menu-item index="/home/index">
-        <i class="el-icon-menu"></i>
-        <span slot="title">检索专利</span>
+
+    <template v-for="(item, index) in menuList">
+      <el-menu-item
+        v-if="!item.children
+        && (isVip || ['MiniProgram'].indexOf(item.key) === -1)
+        && (!isVip || ['HomePage'].indexOf(item.key) === -1)"
+        :index="item.url"
+      >
+        <i :class="item.icon" />
+        <span slot="title">{{item.name}}</span>
       </el-menu-item>
-      <el-submenu index="1">
+      <el-submenu
+        v-else-if="item.children
+        && (isVip || ['MiniProgram'].indexOf(item.key) === -1)
+        && (!isVip || ['HomePage'].indexOf(item.key) === -1)"
+        :index="index + ''">
         <template slot="title">
-          <i class="el-icon-upload"></i>
-          <span slot="title">采集进度</span>
+          <i :class="item.icon"></i>
+          <span slot="title">{{item.name}}</span>
         </template>
-        <el-menu-item-group>
-          <el-menu-item index="/home/importPatent">导入专利</el-menu-item>
-        </el-menu-item-group>
+        <el-menu-item
+          v-for="child in item.children"
+          :index="child.url"
+        >
+          <span slot="title">{{child.name}}</span>
+        </el-menu-item>
       </el-submenu>
-      <el-submenu index="2">
-        <template slot="title">
-          <i class="el-icon-message"></i>
-          <span slot="title">供应商&nbsp;&nbsp;</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="/home/supplier">供应商管理</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <el-submenu index="3">
-        <template slot="title">
-          <i class="el-icon-date"></i>
-          <span slot="title">日志管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="/home/codeCollectLog">采集库导入日志</el-menu-item>
-          <el-menu-item index="/home/sellPatentLog">可售专利导入日志</el-menu-item>
-          <el-menu-item index="/home/soopatCollectLog">SOOPAT采集日志</el-menu-item>
-          <el-menu-item index="/home/gzjCollectLog">国知局采集日志</el-menu-item>
-          <el-menu-item index="/home/loginLog">用户登录日志</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <el-submenu index="4">
-        <template slot="title">
-          <i class="el-icon-setting"></i>
-          <span slot="title">系统设置</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="/home/manage">用户管理</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
+    </template>
+
     </el-menu>
   </div>
 </template>
@@ -67,24 +52,26 @@ export default {
   },
   data () {
     return {
-      nowRoute: ''
+      nowRoute: '',
+      isVip: false
     }
   },
   computed: {
     ...mapState('globalModule', [
+      'menuList',
       'user',
       'isCollapse'
     ])
   },
   methods: {
     handleOpen (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     },
     handleClose (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     },
     updateRouter () {
-      console.log(this.$route)
+      // console.log(this.$route)
       this.nowRoute = this.$route.path
     }
   },
