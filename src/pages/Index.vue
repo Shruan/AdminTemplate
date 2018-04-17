@@ -92,6 +92,7 @@ export default {
     padding: 15px;
     height: 100%;
     width: 100%;
+    height: calc(100% - 50px);
   }
   .shy__layout-nav {
     position: fixed;
