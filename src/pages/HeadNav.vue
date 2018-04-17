@@ -1,9 +1,9 @@
 <template>
   <header class="shy__layout-right-header">
-    <div class="btn-icon" @click="changeNav">
+    <div class="shy__header-btn " @click="changeNav">
       <i class="el-icon-menu"></i>
     </div>
-    <div>
+    <div class="right-menu">
       <el-dropdown trigger="click" @command='logout'>
         <div class="el-dropdown-link">
           <img src="../assets/logo.png">
@@ -56,4 +56,43 @@ export default {
 </script>
 
 <style lang="css">
+  .shy__layout-right-header {
+    position: relative;
+    height: 50px;
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    text-align: left;
+    padding: 0 20px;
+    z-index: 888;
+  }
+  .shy__header-btn {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    line-height: 50px;
+  }
+
+  .right-menu {
+    float: right;
+    height: 100%
+  }
+  .user-box {
+    box-sizing: border-box;
+    display: inline-block;
+    height: 50px;
+    text-align: left;
+    align-self: center;
+    line-height: 16px;
+  }
+  .el-dropdown-link {
+    line-height: 50px;
+    height: 50px;
+    cursor: pointer;
+  }
+  .el-dropdown-link img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
 </style>

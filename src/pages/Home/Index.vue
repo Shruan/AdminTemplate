@@ -1,6 +1,6 @@
 <template>
   <div class="home-index">
-    <el-card shadow="hover">
+    <el-card shadow="hover" class="shy__full-card">
       <div slot="header" class="clearfix">
         <span>个人中心</span>
         <el-button style="float: right; padding: 3px 0" type="text">提示信息</el-button>
