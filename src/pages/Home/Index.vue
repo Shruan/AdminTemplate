@@ -11,56 +11,78 @@
             class="seach-top-keyword"
             size="small"
             placeholder="请输入要搜索的专利名关键字"
-            v-model="form.name">
+            v-model="searchForm.name">
             <i slot="suffix"
               class="el-input__icon el-icon-search"
               @click="seach"
             />
           </el-input>
           <el-button
-              class="seach-top-detail"
-              size="small"
-              @click="showMore"
-              style="margin-left: 15px; display: inline-block"
+            size="small"
+            class="seach-top-detail"
+            style="margin-left: 15px;"
+            @click="showMore"
             >
             筛选<i class="el-icon--right" :class="iconChange"/>
           </el-button>
         </div>
-        <div>
-          <el-button
+        <div class="seach-top-right">
+          <!-- <el-button
             size="small"
             type="primary"
           >
-            <a :href="apiUrl + '/patent/adminlist/excel?title=' + form.name
-             + '&code=' + form.code
-              + '&supplier_id=' + form.supplier_id
-               + '&type=' + form.patentType
-                + '&changed=' + form.isRecord
-                 + '&status=' + form.patentStatus
-                  + '&add_time_s=' + (form.add_time[0] ? form.add_time[0] : '')
-                   + '&add_time_e=' + (form.add_time[1] ? form.add_time[1] : '')
-                    + '&update_time_s=' + (form.update_time[0] ? form.update_time[0] : '')
-                     + '&update_time_e=' + (form.update_time[1] ? form.update_time[1] : '')
-                      + '&is_sell=' + form.isSell"
+            <a :href="apiUrl + '/patent/adminlist/excel?title=' + searchForm.name
+             + '&code=' + searchForm.code
+              + '&supplier_id=' + searchForm.supplier_id
+               + '&type=' + searchForm.patentType
+                + '&changed=' + searchForm.isRecord
+                 + '&status=' + searchForm.patentStatus
+                  + '&add_time_s=' + (searchForm.add_time[0] ? searchForm.add_time[0] : '')
+                   + '&add_time_e=' + (searchForm.add_time[1] ? searchForm.add_time[1] : '')
+                    + '&update_time_s=' + (searchForm.update_time[0] ? searchForm.update_time[0] : '')
+                     + '&update_time_e=' + (searchForm.update_time[1] ? searchForm.update_time[1] : '')
+                      + '&is_sell=' + searchForm.isSell"
                       target="_blank"><font color="#fff">导出检索结果</font></a>
+          </el-button> -->
+          <el-button
+            size="small"
+            type="primary"
+            style="margin-right: 6px;"
+            @click="showSelectEdit">
+            批量编辑
           </el-button>
-          <el-button size="small" @click="collectionType('gzj')">国知局采集</el-button>
-          <el-button size="small" @click="collectionType('soopat')">SOOPAT采集</el-button>
-          <el-button size="small" @click="showSelectEdit">批量编辑</el-button>
+
+          <el-dropdown trigger="click">
+            <el-button
+              size="small">
+              更多<i class="el-icon-caret-bottom el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>导出检索结果</el-dropdown-item>
+              <el-dropdown-item>国知局采集</el-dropdown-item>
+              <el-dropdown-item>SOOPAT采集</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <!-- <el-button size="small" @click="collectionType('gzj')">国知局采集</el-button>
+          <el-button size="small" @click="collectionType('soopat')">SOOPAT采集</el-button> -->
         </div>
       </div>
-      <div class="search-detail" v-if="isShowMore">
+      <div
+        class="search-detail"
+        :class="{'search-detail-close': !isShowMore}"
+        :style="isShowMore ? `height:${seachFormHeight}px` : ''"
+      >
         <el-form
           ref="form"
-          :model="form"
+          :model="searchForm"
           label-width="80px"
-          class="form-box"
+          class="searchform-box"
           >
           <el-form-item label="专利名">
             <el-input
               class="search-select"
               size="small"
-              v-model="form.name"
+              v-model="searchForm.name"
               placeholder="请输入专利名关键字"
             />
           </el-form-item>
@@ -68,7 +90,7 @@
             <el-input
               class="search-select"
               size="small"
-              v-model="form.code"
+              v-model="searchForm.code"
               placeholder="请输入专利号"
             />
           </el-form-item>
@@ -78,14 +100,14 @@
               type="daterange"
               format="yyyy-MM-dd"
                 class="search-select"
-              v-model="form.add_time"
+              v-model="searchForm.add_time"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               placeholder="选择日期范围"
             />
           </el-form-item>
           <el-form-item label="是否可售">
-            <el-radio-group v-model="form.isSell">
+            <el-radio-group v-model="searchForm.isSell">
               <el-radio label="10">是</el-radio>
               <el-radio label="20">否</el-radio>
             </el-radio-group>
@@ -94,7 +116,7 @@
             <el-select
               class="search-select"
               size="small"
-              v-model="form.supplier_id"
+              v-model="searchForm.supplier_id"
               clearable
               placeholder="请选择供应商"
             >
@@ -115,7 +137,7 @@
               placeholder="选择日期范围"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              v-model="form.update_time"
+              v-model="searchForm.update_time"
             />
           </el-form-item>
           <el-form-item label="专利类型">
@@ -123,7 +145,7 @@
               clearable
               size="small"
               class="search-select"
-              v-model="form.patentType"
+              v-model="searchForm.patentType"
               placeholder="请选择专利类型"
             >
               <el-option label="发明专利" value="1" />
@@ -136,7 +158,7 @@
           <el-form-item label="变更记录">
             <el-radio-group
               size="small"
-              v-model="form.isRecord">
+              v-model="searchForm.isRecord">
               <el-radio label="10">有</el-radio>
               <el-radio label="20">没有</el-radio>
             </el-radio-group>
@@ -145,7 +167,7 @@
             <el-select
               class="search-select"
               size="small"
-              v-model="form.patentStatus"
+              v-model="searchForm.patentStatus"
               clearable
               placeholder="请选择法律状态"
             >
@@ -174,26 +196,28 @@
         </el-form>
       </div>
       <el-table
+        border
+        size="mini"
+        class="table-box"
+        style="width: 100%"
         v-loading="loading"
         element-loading-text="加载中,请稍后"
-        border
+        :data="patentList"
         @select="selectData"
         @select-all="selectData"
-        :data="patentList"
-        style="width: 100%"
         @cell-click="clickThisCell"
-        class="table-box">
+        >
         <el-table-column
           type="selection"
           align="center"
-          width="55">
-        </el-table-column>
+          width="55"
+        />
         <el-table-column
           prop="code"
           label="专利号"
           width="150"
-          align="center">
-        </el-table-column>
+          align="center"
+        />
         <el-table-column
           prop="title"
           label="专利名称"
@@ -207,8 +231,8 @@
           prop="type"
           label="专利类型"
           align="center"
-          width="95">
-        </el-table-column>
+          width="95"
+        />
         <el-table-column
           prop="get_certify"
           label="是否下证"
@@ -256,14 +280,14 @@
           prop="status"
           label="法律状态"
           align="center"
-          width="150">
-        </el-table-column>
+          width="150"
+        />
         <el-table-column
           prop="changed"
           label="变更记录"
           align="center"
-          width="80">
-        </el-table-column>
+          width="80"
+        />
         <el-table-column
           prop="supplier_id"
           label="供应商"
@@ -277,15 +301,16 @@
           prop="add_time"
           label="录入时间"
           align="center"
-          width="180">
-        </el-table-column>
+          width="180"
+        />
         <el-table-column
           prop="update_time"
           label="国知局采集时间"
           align="center"
-          width="180">
-        </el-table-column>
+          width="180"
+        />
       </el-table>
+      <!-- 分页 -->
       <div class="block">
         <el-pagination
           @current-change="changePage"
@@ -293,102 +318,10 @@
           :page-size="Number(pageSize)"
           layout="sizes, total, prev, pager, next"
           :page-sizes="[10, 20, 30, 50, 100, 200, 300, 500, 1000]"
-          :total="Number(dataTotal)">
-        </el-pagination>
+          :total="Number(dataTotal)"
+        />
       </div>
     </el-card>
-    <el-dialog
-      title="供应商详情"
-      :visible.sync="isShowSupplier"
-      class="dialog">
-      <el-table
-        v-loading="loading"
-        element-loading-text="加载中,请稍后"
-        border
-        :data="useSupplierList"
-        style="width: 100%;margin-bottom: 20px;"
-        @cell-click="clickThisCell">
-        <el-table-column
-        type="expand"
-        align="left">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand table-box"
-              v-if="props.row.contact"
-              v-for="item in props.row.contact"
-              :key="item.id"
-            >
-              <el-form-item label="联系人">
-                <span>{{ item.contact }}</span>
-              </el-form-item>
-              <el-form-item label="手机">
-                <span>{{ item.phone }}</span>
-              </el-form-item>
-              <el-form-item label="电话">
-                <span>{{ item.tel }}</span>
-              </el-form-item>
-              <el-form-item label="qq">
-                <span>{{ item.qq }}</span>
-              </el-form-item>
-              <el-form-item label="微信">
-                <span>{{ item.wechat }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="供应商全称"
-          minWidth="150"
-          align="center">
-        </el-table-column>
-        <el-table-column
-          prop="brief"
-          label="供应商简称"
-          width="250"
-          align="center">
-        </el-table-column>
-        <el-table-column
-          prop="trace_man"
-          label="跟踪人"
-          width="180"
-          align="center">
-        </el-table-column>
-        <el-table-column
-          prop="add_time"
-          label="添加时间"
-          width="180"
-          align="center">
-        </el-table-column>
-        <el-table-column
-          prop="update_time"
-          label="更新时间"
-          width="180"
-          align="center">
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          align="center"
-          width="150">
-          <template slot-scope="scope">
-            <el-button size='small' @click='deleteSupplier(scope.row)'>删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="">
-        <el-form label-position="left" label-width="100px" class="dialog-select" v-if="isShowAddSelect">
-          <el-form-item label="供应商名称" >
-            <el-select v-model="addSupplierSelect.supplierId" placeholder="请选择供应商名称">
-              <el-option :label="item.name" :value="item.id"
-              v-for="item in supplierList"
-              :key="item.id"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-button style="align-self: flex-start;margin-left: 20px" @click="addSupplier('create')">保存</el-button>
-          <el-button style="align-self: flex-start;margin-left: 20px" @click="showAddSelect('cancel')">取消</el-button>
-        </el-form>
-        <el-button @click="showAddSelect('show')">添加</el-button>
-      </div>
-    </el-dialog>
     <el-dialog
       title="批量编辑操作"
       :visible.sync="isShowSelectEdit"
@@ -427,8 +360,11 @@
 <script>
 import { mapState } from 'vuex'
 export default {
+  components: {
+  },
   data () {
     return {
+      isShowActivityDetailDialog: false, // 详情弹窗
       isShowAddSelect: false,
       isShowSelectEdit: false,
       hasSelectData: [],
@@ -454,7 +390,7 @@ export default {
         isSell: '',
         type: ''
       },
-      form: {
+      searchForm: {
         name: '',
         code: '',
         add_time: '',
@@ -470,7 +406,12 @@ export default {
   computed: {
     ...mapState([
       'user'
-    ])
+    ]),
+    // 动态计算筛选列高度
+    seachFormHeight () {
+      let line = parseInt(Object.keys(this.searchForm).length / 3) + 1
+      return line * 45
+    }
   },
   created () {
     let height = window.innerHeight
@@ -493,29 +434,29 @@ export default {
       }
       let url = ''
       if (val === 'gzj') {
-        url = this.apiUrl + '/patent/admin/collect/gzj?title=' + this.form.name +
-        '&code=' + this.form.code +
-        '&supplier_id=' + this.form.supplier_id +
-        '&type=' + this.form.patentType +
-        '&changed=' + this.form.isRecord +
-        '&status=' + this.form.patentStatus +
-        '&add_time_s=' + (this.form.add_time[0] ? this.form.add_time[0] : '') +
-        '&add_time_e=' + (this.form.add_time[1] ? this.form.add_time[1] : '') +
-        '&update_time_s=' + (this.form.update_time[0] ? this.form.update_time[0] : '') +
-        '&update_time_e=' + (this.form.update_time[1] ? this.form.update_time[1] : '') +
-        '&is_sell=' + this.form.isSell
+        url = this.apiUrl + '/patent/admin/collect/gzj?title=' + this.searchForm.name +
+        '&code=' + this.searchForm.code +
+        '&supplier_id=' + this.searchForm.supplier_id +
+        '&type=' + this.searchForm.patentType +
+        '&changed=' + this.searchForm.isRecord +
+        '&status=' + this.searchForm.patentStatus +
+        '&add_time_s=' + (this.searchForm.add_time[0] ? this.searchForm.add_time[0] : '') +
+        '&add_time_e=' + (this.searchForm.add_time[1] ? this.searchForm.add_time[1] : '') +
+        '&update_time_s=' + (this.searchForm.update_time[0] ? this.searchForm.update_time[0] : '') +
+        '&update_time_e=' + (this.searchForm.update_time[1] ? this.searchForm.update_time[1] : '') +
+        '&is_sell=' + this.searchForm.isSell
       } else if (val === 'soopat') {
-        url = this.apiUrl + '/patent/admin/collect/soopat?title=' + this.form.name +
-        '&code=' + this.form.code +
-        '&supplier_id=' + this.form.supplier_id +
-        '&type=' + this.form.patentType +
-        '&changed=' + this.form.isRecord +
-        '&status=' + this.form.patentStatus +
-        '&add_time_s=' + (this.form.add_time[0] ? this.form.add_time[0] : '') +
-        '&add_time_e=' + (this.form.add_time[1] ? this.form.add_time[1] : '') +
-        '&update_time_s=' + (this.form.update_time[0] ? this.form.update_time[0] : '') +
-        '&update_time_e=' + (this.form.update_time[1] ? this.form.update_time[1] : '') +
-        '&is_sell=' + this.form.isSell
+        url = this.apiUrl + '/patent/admin/collect/soopat?title=' + this.searchForm.name +
+        '&code=' + this.searchForm.code +
+        '&supplier_id=' + this.searchForm.supplier_id +
+        '&type=' + this.searchForm.patentType +
+        '&changed=' + this.searchForm.isRecord +
+        '&status=' + this.searchForm.patentStatus +
+        '&add_time_s=' + (this.searchForm.add_time[0] ? this.searchForm.add_time[0] : '') +
+        '&add_time_e=' + (this.searchForm.add_time[1] ? this.searchForm.add_time[1] : '') +
+        '&update_time_s=' + (this.searchForm.update_time[0] ? this.searchForm.update_time[0] : '') +
+        '&update_time_e=' + (this.searchForm.update_time[1] ? this.searchForm.update_time[1] : '') +
+        '&is_sell=' + this.searchForm.isSell
       }
       let header = {
         'X-TOKEN': this.user.token,
@@ -564,7 +505,7 @@ export default {
       }
     },
     reset () {
-      this.form.name = this.form.code = this.form.add_time = this.form.isSell = this.form.supplier_id = this.form.patentType = this.form.update_time = this.form.patentStatus = this.form.isRecord = ''
+      this.searchForm.name = this.searchForm.code = this.searchForm.add_time = this.searchForm.isSell = this.searchForm.supplier_id = this.searchForm.patentType = this.searchForm.update_time = this.searchForm.patentStatus = this.searchForm.isRecord = ''
     },
     deleteSupplier (getData) {
       let patent = {}
@@ -845,7 +786,7 @@ export default {
       setTimeout(() => {
         this.loading = false
       }, 500)
-      // if (!this.form.name && !this.form.code && !this.form.update_time && !this.form.isSell && !this.form.supplier_id && !this.form.add_time && !this.form.patentType && !this.form.patentStatus && !this.form.isRecord) {
+      // if (!this.searchForm.name && !this.searchForm.code && !this.searchForm.update_time && !this.searchForm.isSell && !this.searchForm.supplier_id && !this.searchForm.add_time && !this.searchForm.patentType && !this.searchForm.patentStatus && !this.searchForm.isRecord) {
       //   this.isSeach = false
       //   this.getPatentList()
       // } else {
@@ -856,17 +797,17 @@ export default {
       //     'X-USER-ID': this.user.id
       //   }
       //   let data = {
-      //     title: this.form.name,
-      //     code: this.form.code,
-      //     is_sell: this.form.isSell,
-      //     supplier_id: this.form.supplier_id,
-      //     add_time_s: this.form.add_time[0],
-      //     add_time_e: this.form.add_time[1],
-      //     update_time_s: this.form.update_time[0],
-      //     update_time_e: this.form.update_time[1],
-      //     type: this.form.patentType,
-      //     status: this.form.patentStatus,
-      //     changed: this.form.isRecord
+      //     title: this.searchForm.name,
+      //     code: this.searchForm.code,
+      //     is_sell: this.searchForm.isSell,
+      //     supplier_id: this.searchForm.supplier_id,
+      //     add_time_s: this.searchForm.add_time[0],
+      //     add_time_e: this.searchForm.add_time[1],
+      //     update_time_s: this.searchForm.update_time[0],
+      //     update_time_e: this.searchForm.update_time[1],
+      //     type: this.searchForm.patentType,
+      //     status: this.searchForm.patentStatus,
+      //     changed: this.searchForm.isRecord
       //   }
       //   this.$http.get(url, {params: data, headers: header}).then(res => {
       //     res = res.data
@@ -908,17 +849,24 @@ export default {
     box-sizing: border-box;
     position: relative;
     width: 100%;
+    transition: .5s;
+  }
+  .search-detail-close {
+    overflow: hidden;
+    height: 0;
+    opacity: 0;
   }
   .search-select {
     width: 100%
   }
-  .form-box {
+  .searchform-box {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 10px;
+    /* margin-top: 10px; */
   }
-  .el-form-item {
+  .searchform-box .el-form-item {
     width: 270px;
+    margin-bottom: 4px;
   }
   .dialog .table-box .el-form-item {
     width: 200px;
