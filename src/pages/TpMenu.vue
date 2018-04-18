@@ -13,6 +13,7 @@
 
     <template v-for="(item, index) in menuList">
       <el-menu-item
+        :key="index"
         v-if="!item.children
         && (isVip || ['MiniProgram'].indexOf(item.key) === -1)
         && (!isVip || ['HomePage'].indexOf(item.key) === -1)"
@@ -22,6 +23,7 @@
         <span slot="title">{{item.name}}</span>
       </el-menu-item>
       <el-submenu
+        :key="index"
         v-else-if="item.children
         && (isVip || ['MiniProgram'].indexOf(item.key) === -1)
         && (!isVip || ['HomePage'].indexOf(item.key) === -1)"
@@ -32,6 +34,7 @@
         </template>
         <el-menu-item
           v-for="child in item.children"
+          :key="child.url"
           :index="child.url"
         >
           <span slot="title">{{child.name}}</span>
@@ -83,7 +86,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  /* .el-menu-vertical-demo:not(.el-menu--collapse) {
-    width: 180px!important;
-  } */
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 179px!important;
+    overflow: hidden;
+  }
 </style>
