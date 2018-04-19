@@ -16,7 +16,9 @@
       :style="isCollapse ? 'padding-left: 65px' : ''">
       <HeadNav />
       <section class="shy__layout-content">
-        <router-view class="router"/>
+        <transition :name="transitionName">
+          <router-view class="router"/>
+        </transition>
       </section>
     </div>
   </div>
@@ -35,7 +37,8 @@ export default {
   data () {
     return {
       user: {},
-      pageStyle: ''
+      pageStyle: '',
+      transitionName: 'slide-left'
       // screenWidth: document.body.clientWidth
     }
   },
@@ -43,6 +46,16 @@ export default {
     ...mapState('globalModule', [
       'isCollapse'
     ])
+  },
+  watch: {
+    '$route' (to, from) {
+      console.log(to)
+      console.log(from)
+      const toDepth = to.path.split('/').length
+      const fromDepth = from.path.split('/').length
+      this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+      console.log(this.transitionName)
+    }
   },
   // mounted () {
   //   const that = this
@@ -90,9 +103,8 @@ export default {
     position: relative;
     overflow-x: hidden;
     padding: 15px;
-    height: 100%;
-    width: 100%;
     height: calc(100% - 50px);
+    width: 100%;
   }
   .shy__layout-nav {
     position: fixed;
@@ -123,11 +135,41 @@ export default {
   .clearfix:after {
     clear: both
   }
+
+  /* 页面切换 动态效果 */
   .router {
-    /* position: absolute; */
+    position: absolute;
     display: block;
-    height: 100%;
+    height: calc(100% - 30px);
+    width: calc(100% - 30px);
   }
+  /* 左滑 */
+  .slide-left-enter-active, .slide-left-leave-active {
+    transition: all .5s;
+  }
+  .slide-left-enter, .slide-left-leave-active {
+    opacity: 0;
+  }
+  .slide-left-enter {
+    transform: translateX(50px);
+  }
+  .slide-left-leave-active {
+    transform: translateX(-50px);
+  }
+  /* 右滑 */
+  .slide-right-enter-active, .slide-right-leave-active {
+    transition: all 1s;
+  }
+  .slide-right-enter, .slide-right-leave-active {
+    opacity: 0;
+  }
+  .slide-right-enter {
+    transform: translateX(31px);
+  }
+  .slide-right-leave-active {
+    transform: translateX(-31px);
+  }
+  /* 页面切换 动态效果 */
 
   /* 全局样式 */
   .shy__full-card {
