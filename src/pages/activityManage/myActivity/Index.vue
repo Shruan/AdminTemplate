@@ -52,23 +52,19 @@
             批量编辑
           </el-button>
 
-          <el-button
-            size="small"
-            type="primary"
-            style="margin-right: 6px;"
-            @click="isShowActivityDetailDialog = true">
-            批量操作2
-          </el-button>
-
-          <el-dropdown trigger="click">
+          <el-dropdown
+            trigger="click"
+            @command="dropdownOpertion"
+            >
             <el-button
               size="small">
               更多<i class="el-icon-caret-bottom el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>导出检索结果</el-dropdown-item>
-              <el-dropdown-item>国知局采集</el-dropdown-item>
-              <el-dropdown-item>SOOPAT采集</el-dropdown-item>
+              <el-dropdown-item command="export">导出检索结果</el-dropdown-item>
+              <el-dropdown-item command="guozi">国知局采集</el-dropdown-item>
+              <el-dropdown-item command="soopat">SOOPAT采集</el-dropdown-item>
+              <el-dropdown-item command="dialog">弹窗</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
           <!-- <el-button size="small" @click="collectionType('gzj')">国知局采集</el-button>
@@ -221,27 +217,42 @@
           width="55"
         />
         <el-table-column
+          v-if="columnCheckList.indexOf('code') !== -1"
           prop="code"
           label="专利号"
           width="150"
           align="center"
         />
         <el-table-column
+          v-if="columnCheckList.indexOf(item.prop) !== -1"
+          v-for="(item, index) in columnList"
+          :key="index"
+          :prop="item.prop"
+          :label="item.label"
+          :width="item.width"
+          :render-header="item.render"
+          align="center"
+        />
+        <el-table-column
+          v-if="columnCheckList.indexOf('title') !== -1"
           prop="title"
           label="专利名称"
           align="center"
           minWidth="300">
           <template slot-scope="scope">
+            111
             <a :href="apiUrl + '/detail/' + scope.row.code" target="-_blank">{{scope.row.title}}</a>
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columnCheckList.indexOf('type') !== -1"
           prop="type"
           label="专利类型"
           align="center"
           width="95"
         />
         <el-table-column
+          v-if="columnCheckList.indexOf('get_certify') !== -1"
           prop="get_certify"
           label="是否下证"
           align="center"
@@ -251,6 +262,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columnCheckList.indexOf('is_sell') !== -1"
           label="是否可售"
           prop="is_sell"
           align="center"
@@ -268,6 +280,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columnCheckList.indexOf('cost_price') !== -1"
           prop="cost_price"
           label="成本价"
           align="center"
@@ -285,18 +298,21 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columnCheckList.indexOf('status') !== -1"
           prop="status"
           label="法律状态"
           align="center"
           width="150"
         />
         <el-table-column
+          v-if="columnCheckList.indexOf('changed') !== -1"
           prop="changed"
           label="变更记录"
           align="center"
           width="80"
         />
         <el-table-column
+          v-if="columnCheckList.indexOf('supplier_id') !== -1"
           prop="supplier_id"
           label="供应商"
           align="center"
@@ -306,12 +322,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="columnCheckList.indexOf('add_time') !== -1"
           prop="add_time"
           label="录入时间"
           align="center"
           width="180"
         />
         <el-table-column
+          v-if="columnCheckList.indexOf('update_time') !== -1"
           prop="update_time"
           label="国知局采集时间"
           align="center"
@@ -378,6 +396,11 @@ export default {
       pageSize: 20,
       dataTotal: '',
       key: '',
+      columnCheckList: [
+        'keyword',
+        'code',
+        'status'
+      ],
       searchForm: {
         name: '',
         code: '',
@@ -399,9 +422,30 @@ export default {
     searchFormHeight () {
       let line = parseInt(Object.keys(this.searchForm).length / 3) + 1
       return line * 45
+    },
+    columnList () {
+      let column = [
+        {
+          prop: 'keyword',
+          label: '关键字',
+          width: 140,
+          render: (h, { column }) => {
+            console.log(column.prop)
+            console.log(column.label)
+            return h('div', ['cccc'])
+          }
+        }
+      ]
+      return column
     }
   },
   created () {
+    let tableData = [
+      {
+        keyword: '测试'
+      }
+    ]
+    this.patentList = tableData
     let height = window.innerHeight
     this.pageStyle = 'min-height:' + (height - 100) + 'px;'
     // if (!this.user.id) {
@@ -437,6 +481,7 @@ export default {
         this.$message.error('网络错误，请稍后再试')
       })
     },
+    // 分页
     pageSizeChange (val) {
       this.pageSize = val
       window.localStorage.ehpat_index_pageSize = val
@@ -456,6 +501,12 @@ export default {
         if (this.searchForm.hasOwnProperty(key)) {
           this.searchForm[key] = ''
         }
+      }
+    },
+    // 下拉菜单操作
+    dropdownOpertion (command) {
+      if (command === 'dialog') {
+        this.isShowActivityDetailDialog = true
       }
     },
     // confirm 提示确认
