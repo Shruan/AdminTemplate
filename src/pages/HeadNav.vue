@@ -34,7 +34,6 @@ export default {
     ])
   },
   created () {
-    console.log(this.user)
   },
   methods: {
     ...mapMutations('globalModule', [

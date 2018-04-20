@@ -49,12 +49,9 @@ export default {
   },
   watch: {
     '$route' (to, from) {
-      console.log(to)
-      console.log(from)
       const toDepth = to.path.split('/').length
       const fromDepth = from.path.split('/').length
       this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
-      console.log(this.transitionName)
     }
   },
   // mounted () {
@@ -171,8 +168,14 @@ export default {
   }
   /* 页面切换 动态效果 */
 
-  /* 全局样式 */
-  .shy__full-card {
-    min-height: 100%;
+  /* 覆盖element ui样式 */
+  .searchform-box .el-form-item .el-form-item__label {
+    font-size: 12px;
+  }
+  .el-form-item .el-date-editor--daterange.el-input {
+    width: 100%;
+  }
+  .el-table__body .el-table__expanded-cell {
+    background: #fbfbfb;
   }
 </style>
