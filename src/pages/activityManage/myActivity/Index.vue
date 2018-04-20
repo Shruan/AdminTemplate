@@ -44,6 +44,39 @@
                       + '&is_sell=' + searchForm.isSell"
                       target="_blank"><font color="#fff">导出检索结果</font></a>
           </el-button> -->
+
+          <!-- 筛选列 -->
+          <el-popover
+            ref="columnCheck"
+            placement="bottom"
+            width="200"
+            trigger="click">
+            <div>
+              <el-checkbox
+                :indeterminate="columnChecked.length !== 0 && Object.keys(columnCheckList).length !== columnChecked.length"
+                v-model="isColumnCheckAll"
+                @change="handleCheckAllChange">
+                全选
+              </el-checkbox>
+              <div style="margin: 15px 0;"></div>
+              <el-checkbox-group v-model="columnChecked">
+                <el-checkbox
+                  class="checkbox-style"
+                  style="margin-left: 0"
+                  v-for="item in columnCheckList"
+                  :label="item.key"
+                  :key="item.key">
+                  {{item.label}}
+                </el-checkbox>
+              </el-checkbox-group>
+            </div>
+          </el-popover>
+          <el-button v-popover:columnCheck
+            size="small">
+            筛选列<i class="el-icon-caret-bottom el-icon--right"></i>
+          </el-button>
+
+          <!-- 批量操作 -->
           <el-button
             size="small"
             type="primary"
@@ -52,6 +85,7 @@
             批量编辑
           </el-button>
 
+          <!-- 更多操作 -->
           <el-dropdown
             trigger="click"
             @command="dropdownOpertion"
@@ -71,6 +105,8 @@
           <el-button size="small" @click="collectionType('soopat')">SOOPAT采集</el-button> -->
         </div>
       </div>
+
+      <!-- 搜索条件 -->
       <div
         class="search-detail"
         :class="{'search-detail-close': !isShowSearchForm}"
@@ -103,7 +139,7 @@
               size="small"
               type="daterange"
               format="yyyy-MM-dd"
-                class="search-select"
+              class="search-select"
               v-model="searchForm.add_time"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
@@ -199,6 +235,8 @@
           </el-form-item>
         </el-form>
       </div>
+
+      <!-- 列表 -->
       <el-table
         border
         size="mini"
@@ -217,14 +255,14 @@
           width="55"
         />
         <el-table-column
-          v-if="columnCheckList.indexOf('code') !== -1"
+          v-if="columnChecked.indexOf('code') !== -1"
           prop="code"
           label="专利号"
           width="150"
           align="center"
         />
         <el-table-column
-          v-if="columnCheckList.indexOf(item.prop) !== -1"
+          v-if="columnChecked.indexOf(item.prop) !== -1"
           v-for="(item, index) in columnList"
           :key="index"
           :prop="item.prop"
@@ -234,25 +272,24 @@
           align="center"
         />
         <el-table-column
-          v-if="columnCheckList.indexOf('title') !== -1"
+          v-if="columnChecked.indexOf('title') !== -1"
           prop="title"
           label="专利名称"
           align="center"
           minWidth="300">
           <template slot-scope="scope">
-            111
             <a :href="apiUrl + '/detail/' + scope.row.code" target="-_blank">{{scope.row.title}}</a>
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columnCheckList.indexOf('type') !== -1"
+          v-if="columnChecked.indexOf('type') !== -1"
           prop="type"
           label="专利类型"
           align="center"
           width="95"
         />
         <el-table-column
-          v-if="columnCheckList.indexOf('get_certify') !== -1"
+          v-if="columnChecked.indexOf('get_certify') !== -1"
           prop="get_certify"
           label="是否下证"
           align="center"
@@ -262,7 +299,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columnCheckList.indexOf('is_sell') !== -1"
+          v-if="columnChecked.indexOf('is_sell') !== -1"
           label="是否可售"
           prop="is_sell"
           align="center"
@@ -280,7 +317,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columnCheckList.indexOf('cost_price') !== -1"
+          v-if="columnChecked.indexOf('cost_price') !== -1"
           prop="cost_price"
           label="成本价"
           align="center"
@@ -298,21 +335,21 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columnCheckList.indexOf('status') !== -1"
+          v-if="columnChecked.indexOf('status') !== -1"
           prop="status"
           label="法律状态"
           align="center"
           width="150"
         />
         <el-table-column
-          v-if="columnCheckList.indexOf('changed') !== -1"
+          v-if="columnChecked.indexOf('changed') !== -1"
           prop="changed"
           label="变更记录"
           align="center"
           width="80"
         />
         <el-table-column
-          v-if="columnCheckList.indexOf('supplier_id') !== -1"
+          v-if="columnChecked.indexOf('supplier_id') !== -1"
           prop="supplier_id"
           label="供应商"
           align="center"
@@ -322,14 +359,14 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="columnCheckList.indexOf('add_time') !== -1"
+          v-if="columnChecked.indexOf('add_time') !== -1"
           prop="add_time"
           label="录入时间"
           align="center"
           width="180"
         />
         <el-table-column
-          v-if="columnCheckList.indexOf('update_time') !== -1"
+          v-if="columnChecked.indexOf('update_time') !== -1"
           prop="update_time"
           label="国知局采集时间"
           align="center"
@@ -378,6 +415,7 @@ export default {
       isShowActivityDetailDialog: false, // 详情弹窗
       isShowAddSelect: false,
       isShowBatchSetDialog: false,
+      isColumnCheckAll: false,
       hasSelectData: [],
       selectDataId: [],
       patentList: [],
@@ -397,10 +435,12 @@ export default {
       dataTotal: '',
       key: '',
       columnCheckList: [
-        'keyword',
-        'code',
-        'status'
+        { label: '关键字', key: 'keyword' },
+        { label: '编号', key: 'code' },
+        { label: '标题', key: 'title' },
+        { label: '状态', key: 'status' }
       ],
+      columnChecked: [],
       searchForm: {
         name: '',
         code: '',
@@ -428,15 +468,19 @@ export default {
         {
           prop: 'keyword',
           label: '关键字',
-          width: 140,
-          render: (h, { column }) => {
-            console.log(column.prop)
-            console.log(column.label)
-            return h('div', ['cccc'])
-          }
+          width: 140
         }
       ]
       return column
+    }
+  },
+  watch: {
+    columnChecked (val) {
+      if (Object.keys(this.columnCheckList).length === this.columnChecked.length) {
+        this.isColumnCheckAll = true
+      } else {
+        this.isColumnCheckAll = false
+      }
     }
   },
   created () {
@@ -445,6 +489,9 @@ export default {
         keyword: '测试'
       }
     ]
+    this.columnChecked = this.columnCheckList.map(item => {
+      return item.key
+    })
     this.patentList = tableData
     let height = window.innerHeight
     this.pageStyle = 'min-height:' + (height - 100) + 'px;'
@@ -507,6 +554,16 @@ export default {
     dropdownOpertion (command) {
       if (command === 'dialog') {
         this.isShowActivityDetailDialog = true
+      }
+    },
+    // 筛选列
+    handleCheckAllChange (val) {
+      if (val) {
+        this.columnChecked = this.columnCheckList.map(item => {
+          return item.key
+        })
+      } else {
+        this.columnChecked = []
       }
     },
     // confirm 提示确认
@@ -691,5 +748,8 @@ export default {
     width: 270px;
     margin-bottom: 4px;
   }
-
+  .checkbox-style {
+    display: inline-block;
+    width: 50%;
+  }
 </style>
