@@ -8,10 +8,12 @@
       <div class="search-top">
         <div class="search-top-left">
           <el-input
-            class="search-top-keyword"
             size="small"
+            class="search-top-keyword"
             placeholder="请输入要搜索的专利名关键字"
-            v-model="searchForm.name">
+            v-model="searchForm.name"
+            @keyup.enter.native="search"
+            >
             <i slot="suffix"
               class="el-input__icon el-icon-search"
               @click="search"
@@ -126,6 +128,7 @@
               placeholder="请输入专利名关键字"
             />
           </el-form-item>
+
           <el-form-item label="专利号">
             <el-input
               class="search-select"
@@ -134,6 +137,7 @@
               placeholder="请输入专利号"
             />
           </el-form-item>
+
           <el-form-item label="录入时间">
             <el-date-picker
               size="small"
@@ -146,12 +150,14 @@
               placeholder="选择日期范围"
             />
           </el-form-item>
+
           <el-form-item label="是否可售">
             <el-radio-group v-model="searchForm.isSell">
               <el-radio label="10">是</el-radio>
               <el-radio label="20">否</el-radio>
             </el-radio-group>
           </el-form-item>
+
           <el-form-item label="供应商">
             <el-select
               class="search-select"
@@ -168,6 +174,7 @@
               />
             </el-select>
           </el-form-item>
+
           <el-form-item label="更新时间">
             <el-date-picker
               size="small"
@@ -180,6 +187,7 @@
               v-model="searchForm.update_time"
             />
           </el-form-item>
+
           <el-form-item label="专利类型">
             <el-select
               clearable
@@ -187,14 +195,16 @@
               class="search-select"
               v-model="searchForm.patentType"
               placeholder="请选择专利类型"
-            >
-              <el-option label="发明专利" value="1" />
-              <el-option label="实用新型" value="2" />
-              <el-option label="外观专利" value="3" />
-              <el-option label="PCT发明" value="4" />
-              <el-option label="PCT实用" value="5" />
+              >
+              <el-option
+                v-for="item in patentTypeList"
+                :key="item.value"
+                :value="item.value"
+                :label="item.name"
+              />
             </el-select>
           </el-form-item>
+
           <el-form-item label="变更记录">
             <el-radio-group
               size="small"
@@ -203,6 +213,7 @@
               <el-radio label="20">没有</el-radio>
             </el-radio-group>
           </el-form-item>
+
           <el-form-item label="法律状态">
             <el-select
               class="search-select"
@@ -211,13 +222,12 @@
               clearable
               placeholder="请选择法律状态"
             >
-              <el-option label="授权未下证" value="授权未下证" />
-              <el-option label="专利权维持" value="专利权维持" />
-              <el-option label="等年费滞纳金" value="等年费滞纳金" />
-              <el-option label="视为放弃，等恢复" value="视为放弃，等恢复" />
-              <el-option label="审核中" value="审核中" />
-              <el-option label="无效" value="无效" />
-              <el-option label="其他" value="其他" />
+              <el-option
+                v-for="item in patentStatusList"
+                :key="item.value"
+                :value="item.value"
+                :label="item.name"
+              />
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -238,7 +248,6 @@
 
       <!-- 列表 -->
       <el-table
-        border
         size="mini"
         class="table-box"
         style="width: 100%"
@@ -255,20 +264,10 @@
           width="55"
         />
         <el-table-column
-          v-if="columnChecked.indexOf('code') !== -1"
           prop="code"
           label="专利号"
           width="150"
-          align="center"
-        />
-        <el-table-column
-          v-if="columnChecked.indexOf(item.prop) !== -1"
-          v-for="(item, index) in columnList"
-          :key="index"
-          :prop="item.prop"
-          :label="item.label"
-          :width="item.width"
-          :render-header="item.render"
+          fixed="left"
           align="center"
         />
         <el-table-column
@@ -372,6 +371,32 @@
           align="center"
           width="180"
         />
+        <el-table-column
+          v-show="columnChecked.length === 0"
+          prop=" "
+          label=" "
+        />
+        <el-table-column
+          label="操作"
+          align="center"
+          width="180">
+          <template slot-scope="scope">
+            <el-button
+              plain
+              size="small"
+              type="primary"
+              @click="useSupplierMsg(scope.row)">
+              查看
+            </el-button>
+            <el-button
+              plain
+              size="small"
+              type="danger"
+              @click="useSupplierMsg(scope.row)">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 分页 -->
       <div class="block">
@@ -404,6 +429,7 @@
 <script>
 import ActivityDetailDialog from './subPage/ActivityDetailDialog'
 import BatchSetDialog from './subPage/BatchSetDialog'
+import { patentTypeList, patentStatusList } from '@/assets/globalData'
 import { mapState } from 'vuex'
 export default {
   components: {
@@ -412,6 +438,12 @@ export default {
   },
   data () {
     return {
+      page: 1,
+      pageSize: 20,
+      loading: true,
+      dataTotal: 0,
+      patentTypeList,
+      patentStatusList,
       isShowActivityDetailDialog: false, // 详情弹窗
       isShowAddSelect: false,
       isShowBatchSetDialog: false,
@@ -427,20 +459,22 @@ export default {
         supplierId: '',
         patentId: ''
       },
-      loading: true,
       isShowSupplier: false,
-      iconChange: '',
-      page: 1,
-      pageSize: 20,
-      dataTotal: '',
       key: '',
+      columnChecked: [],
       columnCheckList: [
-        { label: '关键字', key: 'keyword' },
+        { label: '类型', key: 'type' },
         { label: '编号', key: 'code' },
         { label: '标题', key: 'title' },
-        { label: '状态', key: 'status' }
+        { label: '状态', key: 'status' },
+        { label: '是否下证', key: 'get_certify' },
+        { label: '是否可售', key: 'is_sell' },
+        { label: '成本价', key: 'cost_price' },
+        { label: '变更记录', key: 'changed' },
+        { label: '供应商', key: 'supplier_id' },
+        { label: '录入数据', key: 'add_time' },
+        { label: '采集时间', key: 'update_time' }
       ],
-      columnChecked: [],
       searchForm: {
         name: '',
         code: '',
@@ -745,7 +779,7 @@ export default {
     /* margin-top: 10px; */
   }
   .searchform-box .el-form-item {
-    width: 270px;
+    width: 310px;
     margin-bottom: 4px;
   }
   .checkbox-style {
