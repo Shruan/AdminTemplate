@@ -2,8 +2,11 @@ import MyActivity from '@/pages/activityManage/myActivity'
 
 export default [
   {
-    path: '/home/myActivity',
+    path: '/activtyManage/myActivity',
     component: MyActivity,
-    name: '我的活动'
+    name: 'MyActivity',
+    meta: {
+      title: '我的活动'
+    }
   }
 ]

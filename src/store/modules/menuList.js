@@ -9,7 +9,7 @@ export default [
     icon: 'el-icon-date',
     children: [
       {
-        url: '/home/myActivity',
+        url: '/activtyManage/myActivity',
         name: '我发起的活动'
       }
     ]

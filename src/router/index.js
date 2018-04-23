@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/pages/Login'
-import Index from '@/pages/Index'
+import Layout from '@/pages/Index'
 import Home from '@/pages/Home/Index'
 
 import ActivtyManage from './activityManage'
@@ -21,13 +21,23 @@ export default new Router({
     {
       path: '/index',
       name: 'Index',
-      component: Index,
+      component: Layout,
       children: [
         {
           path: '/home/index',
           component: Home,
-          name: '主页'
-        },
+          name: 'Home',
+          meta: {
+            title: '个人主页'
+          }
+        }
+      ]
+    },
+    {
+      path: '/activtyManage',
+      name: 'ActivtyManage',
+      component: Layout,
+      children: [
         ...ActivtyManage
       ]
     }
