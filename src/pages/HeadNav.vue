@@ -3,13 +3,16 @@
     <div class="shy__header-btn " @click="changeNav">
       <i class="el-icon-menu"></i>
     </div>
+    <TpBreadcrumb />
     <div class="right-menu">
       <el-dropdown trigger="click" @command='logout'>
         <div class="el-dropdown-link">
           <img src="../assets/logo.png">
           <div class="user-box">
-            <p>{{user.account || '管理员'}}</p>
-            <p style="font-size:12px">{{user.name || 'Shruan'}}</p>
+            <div style="position: relative; top: 8px">
+              <p>{{user.account || '管理员'}}</p>
+              <p style="font-size:12px">{{user.name || 'Shruan'}}</p>
+            </div>
           </div>
           <i class="el-icon-caret-bottom el-icon--right"></i>
         </div>
@@ -23,7 +26,11 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
+import TpBreadcrumb from './TpBreadcrumb'
 export default {
+  components: {
+    TpBreadcrumb
+  },
   data () {
     return {}
   },
@@ -66,7 +73,7 @@ export default {
   }
   .shy__header-btn {
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: top;
     cursor: pointer;
     line-height: 50px;
   }
@@ -80,8 +87,8 @@ export default {
     display: inline-block;
     height: 50px;
     text-align: left;
-    align-self: center;
     line-height: 16px;
+    margin-left: 5px;
   }
   .el-dropdown-link {
     line-height: 50px;
