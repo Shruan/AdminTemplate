@@ -383,14 +383,14 @@
           <template slot-scope="scope">
             <el-button
               plain
-              size="small"
+              size="mini"
               type="primary"
               @click="useSupplierMsg(scope.row)">
               查看
             </el-button>
             <el-button
               plain
-              size="small"
+              size="mini"
               type="danger"
               @click="useSupplierMsg(scope.row)">
               删除
@@ -518,11 +518,13 @@ export default {
     }
   },
   created () {
-    let tableData = [
-      {
-        keyword: '测试'
+    let tableData = []
+    for (var i = 0; i < 10; i++) {
+      let obj = {
+        keyword: '测试' + i
       }
-    ]
+      tableData.push(obj)
+    }
     this.columnChecked = this.columnCheckList.map(item => {
       return item.key
     })
