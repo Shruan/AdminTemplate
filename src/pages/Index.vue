@@ -29,7 +29,7 @@
 import HeadNav from './HeadNav'
 import TpMenu from './TpMenu'
 import TpTags from './TpTags'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 export default {
   components: {
     TpMenu,
@@ -55,6 +55,8 @@ export default {
       const toDepth = to.path.split('/').length
       const fromDepth = from.path.split('/').length
       this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+      // 添加tag标签
+      this._AddTag(to)
     }
   },
   // mounted () {
@@ -79,7 +81,9 @@ export default {
     // console.log(this.screenWidth)
   },
   methods: {
-
+    ...mapActions('globalModule', [
+      '_AddTag'
+    ])
   }
 }
 </script>

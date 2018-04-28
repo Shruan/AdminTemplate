@@ -1,15 +1,19 @@
 <template>
   <div class="shy__tp-tags">
     <el-tag
+      v-for="item in tagsList"
+      :key="item.routerName"
       closable
       size="medium"
       color="#fff"
       class="shy__tags"
-      @click.native="addTag"
+      @click.native="$router.push({ name: item.routerName })"
       @close="closeTag"
       >
-      <i class="el-icon-success icon icon-active" />
-      标签一
+      <i class="el-icon-success icon"
+        :class="{'icon-active': tag === item.routerName}"
+      />
+      {{item.label}}
     </el-tag>
   </div>
 </template>
@@ -25,7 +29,9 @@ export default {
   computed: {
     ...mapState('globalModule', [
       'user',
-      'isCollapse'
+      'isCollapse',
+      'tagsList',
+      'tag'
     ])
   },
   created () {
@@ -60,6 +66,7 @@ export default {
     cursor: pointer;
   }
   .shy__tags {
+    margin-right: 5px;
     color: #495060;
   }
   .shy__tags:hover {
