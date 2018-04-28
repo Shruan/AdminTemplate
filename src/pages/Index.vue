@@ -15,6 +15,7 @@
       class="shy__layout-right"
       :style="isCollapse ? 'padding-left: 65px' : ''">
       <HeadNav />
+      <TpTags />
       <section class="shy__layout-content">
         <transition :name="transitionName">
           <router-view class="router"/>
@@ -27,11 +28,13 @@
 <script>
 import HeadNav from './HeadNav'
 import TpMenu from './TpMenu'
+import TpTags from './TpTags'
 import { mapState } from 'vuex'
 export default {
   components: {
     TpMenu,
-    HeadNav
+    HeadNav,
+    TpTags
   },
   name: 'index',
   data () {
@@ -100,7 +103,7 @@ export default {
     position: relative;
     overflow-x: hidden;
     padding: 15px;
-    height: calc(100% - 50px);
+    height: calc(100% - 95px);
     width: 100%;
   }
   .shy__layout-nav {
