@@ -1,16 +1,24 @@
 <template>
   <div class="shy__tp-tags">
-    <div class="tags-box">
-      <div class="tags-list">
+    <div
+      ref="tagsBox"
+      class="tags-box"
+      @wheel.prevent="handleScroll">
+      <div
+        class="tags-list"
+        ref="tagsList"
+        :style="`transform: translateX(${left}px);`">
         <el-tag
-          v-for="item in tagsList"
-          :key="item.routerName"
           closable
+          ref="tag"
           size="medium"
           color="#fff"
           class="shy__tags"
-          @click.native="$router.push({ name: item.routerName })"
+          v-for="item in tagsList"
+          :name="item.routerName"
+          :key="item.routerName"
           @close="closeTag"
+          @click.native="$router.push({ name: item.routerName })"
           >
           <i class="el-icon-success icon"
             :class="{'icon-active': tag === item.routerName}"
@@ -37,12 +45,15 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+
+import { mapState, mapMutations, mapActions } from 'vuex'
 export default {
   components: {
   },
   data () {
-    return {}
+    return {
+      left: 0
+    }
   },
   computed: {
     ...mapState('globalModule', [
@@ -52,6 +63,15 @@ export default {
       'tag'
     ])
   },
+  watch: {
+    '$route': {
+      handler (to, from) {
+        // 添加tag标签
+        this._AddTag(to)
+        this.moveToCurrentTag()
+      }
+    }
+  },
   created () {
   },
   methods: {
@@ -59,12 +79,65 @@ export default {
       '_isCollapse',
       '_user'
     ]),
+    ...mapActions('globalModule', [
+      '_AddTag'
+    ]),
     addTag () {
-      console.log(111)
     },
     closeTag (val) {
-      console.log(111)
-      console.log(val)
+    },
+    // tag鼠标滚动事件
+    handleScroll (e) {
+      const padding = 15
+
+      const eventDelta = e.wheelDelta || -e.deltaY * 3
+      const $container = this.$refs.tagsBox
+      const $containerWidth = $container.offsetWidth
+      const $wrapper = this.$refs.tagsList
+      const $wrapperWidth = $wrapper.offsetWidth
+      if (eventDelta > 0) {
+        this.left = Math.min(0, this.left + eventDelta)
+      } else {
+        if ($containerWidth - padding < $wrapperWidth) {
+          if (this.left < -($wrapperWidth - $containerWidth + padding)) {
+            this.left = this.left
+          } else {
+            this.left = Math.max(this.left + eventDelta, $containerWidth - $wrapperWidth - padding)
+          }
+        } else {
+          this.left = 0
+        }
+      }
+    },
+    // 移动到视口事件
+    moveToTarget ($target) {
+      const padding = 5
+      const $container = this.$refs.tagsBox
+      const $containerWidth = $container.offsetWidth
+      const $targetLeft = $target.offsetLeft
+      const $targetWidth = $target.offsetWidth
+
+      if ($targetLeft < -this.left) {
+        // tag in the left
+        this.left = -$targetLeft + padding
+      } else if ($targetLeft + padding > -this.left && $targetLeft + $targetWidth < -this.left + $containerWidth - padding) {
+        // tag in the current view
+        // eslint-disable-line
+      } else {
+        // tag in the right
+        this.left = -($targetLeft - ($containerWidth - $targetWidth) + padding) - 100
+      }
+    },
+    moveToCurrentTag () {
+      const tags = this.$refs.tag
+      this.$nextTick(() => {
+        for (const tag of tags) {
+          if (tag.$attrs.name === this.$route.name) {
+            this.moveToTarget(tag.$el)
+            break
+          }
+        }
+      })
     }
   }
 }
@@ -100,10 +173,14 @@ export default {
     position: relative;
     overflow-y: hidden;
     width: 100%;
-}
+  }
+    .tags-box::-webkit-scrollbar {
+      display: none;
+  }
   .tags-list {
     padding-right: 100px;
     display: inline-block;
+    transition: transform .3s ease;
   }
   .tags-btn {
     position: absolute;
