@@ -7,7 +7,7 @@
     <div class="right-menu">
       <el-dropdown trigger="click" @command='logout'>
         <div class="el-dropdown-link">
-          <img src="../assets/logo.png">
+          <img src="@/assets/logo.png">
           <div class="user-box">
             <div style="position: relative; top: 8px">
               <p>{{user.account || '管理员'}}</p>

@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import HeadNav from './HeadNav'
-import TpMenu from './TpMenu'
-import TpTags from './TpTags'
+import HeadNav from './subPage/HeadNav'
+import TpMenu from './subPage/TpMenu'
+import TpTags from './subPage/TpTags'
 import { mapState, mapActions } from 'vuex'
 export default {
   components: {
@@ -36,7 +36,7 @@ export default {
     HeadNav,
     TpTags
   },
-  name: 'index',
+  name: 'Layout',
   data () {
     return {
       user: {},
