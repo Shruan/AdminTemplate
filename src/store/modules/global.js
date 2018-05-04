@@ -6,6 +6,7 @@ const namespace = 'globalModule'
 $$.setNamespace(namespace)
 
 const state = {
+  isMobile: false,
   user: {},
   menuList: menuList,
   isCollapse: false, // 是否关闭左侧菜单栏
@@ -23,6 +24,9 @@ const state = {
 }
 
 const mutations = {
+  _isMobile (state, value) {
+    state.isMobile = value
+  },
   _user (state, user) {
     state.user = user
   },

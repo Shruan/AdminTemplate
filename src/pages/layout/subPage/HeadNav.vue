@@ -1,6 +1,6 @@
 <template>
   <header class="shy__layout-right-header">
-    <div class="shy__header-btn " @click="changeNav">
+    <div class="shy__header-btn " @click.stop="_isCollapse(!isCollapse)">
       <i class="el-icon-menu"></i>
     </div>
     <TpBreadcrumb />
@@ -47,9 +47,6 @@ export default {
       '_isCollapse',
       '_user'
     ]),
-    changeNav () {
-      this._isCollapse(!this.isCollapse)
-    },
     logout () {
       this.user = {}
       this._user(this.user)

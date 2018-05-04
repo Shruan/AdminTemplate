@@ -20,6 +20,7 @@
             />
           </el-input>
           <el-button
+            v-if="!isMobile"
             size="small"
             class="search-top-detail"
             style="margin-left: 15px;"
@@ -28,7 +29,7 @@
             筛选<i class="el-icon--right" :class="isShowSearchForm ? 'el-icon-minus' : 'el-icon-plus'"/>
           </el-button>
         </div>
-        <div class="search-top-right">
+        <div class="search-top-right" v-if="!isMobile">
           <!-- <el-button
             size="small"
             type="primary"
@@ -259,6 +260,7 @@
         @cell-click="clickThisCell"
       >
         <el-table-column
+          v-if="!isMobile"
           type="selection"
           align="center"
           width="55"
@@ -266,7 +268,7 @@
         <el-table-column
           prop="code"
           label="专利号"
-          width="150"
+          :width="isMobile ? '' : '80px'"
           fixed="left"
           align="center"
         />
@@ -489,8 +491,9 @@ export default {
     }
   },
   computed: {
-    ...mapState([
-      'user'
+    ...mapState('globalModule', [
+      'user',
+      'isMobile'
     ]),
     // 动态计算筛选列高度
     searchFormHeight () {

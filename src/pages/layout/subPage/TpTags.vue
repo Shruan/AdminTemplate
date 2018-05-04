@@ -20,7 +20,7 @@
           @close="closeTag"
           @click.native="$router.push({ name: item.routerName })"
           >
-          <i class="el-icon-success icon"
+          <i class="tags-icon"
             :class="{'icon-active': tag === item.routerName}"
           />
           {{item.label}}
@@ -165,8 +165,17 @@ export default {
     color: #999;
     cursor: pointer;
   }
+  .tags-icon {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #eee;
+    margin-right: 5px;
+    border-radius: 50%;
+    vertical-align: unset;
+  }
   .icon-active {
-    color: #409EFF;
+    background: #409EFF;
   }
   .tags-box {
     white-space: nowrap;
@@ -174,8 +183,8 @@ export default {
     overflow-y: hidden;
     width: 100%;
   }
-    .tags-box::-webkit-scrollbar {
-      display: none;
+  .tags-box::-webkit-scrollbar {
+    display: none;
   }
   .tags-list {
     padding-right: 100px;
@@ -189,7 +198,7 @@ export default {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     text-align: center;
-    width: 110px;
+    width: 120px;
     height: 100%;
     background: #fff;
     box-shadow: -2px 2px 6px #ededed;
