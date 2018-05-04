@@ -215,7 +215,7 @@ export default {
       max-width: 0;
     }
     .shy__layout-content {
-      height: 100%;
+      height: calc(100% - 65px);
     }
   }
 </style>
