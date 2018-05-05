@@ -1,8 +1,8 @@
 import TpLoadingBar from './TpLoadingBar'
 import Vue from 'vue'
 
-let _data = { percent: 10, status: 'success' }
-
+const _data = { percent: 0, status: 'success', isShow: false }
+let time
 const Instance = new Vue({
   data: _data,
   render (h) {
@@ -14,17 +14,49 @@ const Instance = new Vue({
 const component = Instance.$mount()
 document.body.appendChild(component.$el)
 
-const update = function () {
-  component.$data.percent = 100
+function update (data) {
+  for (let key in data) {
+    if (component.$data.hasOwnProperty(key)) {
+      component.$data[key] = data[key]
+    }
+  }
+}
+
+function hide () {
+  let data = _data
+  data.isShow = false
+  update(data)
+}
+
+const start = function () {
+  if (time) clearInterval(time)
+  let data = _data
+  data.percent = 0
+  data.status = 'success'
+  data.isShow = true
+  time = setInterval(() => {
+    data.percent += 20
+    if (data.percent === 100) clearInterval(time)
+    update(data)
+  }, 800)
+}
+
+const finish = function () {
+  if (time) clearInterval(time)
+  update({ percent: 100, status: 'success' })
+  setTimeout(() => { hide() }, 500)
 }
 
 const error = function () {
-  component.$data.status = 'error'
+  if (time) clearInterval(time)
+  update({ percent: 100, status: 'error' })
+  setTimeout(() => { hide() }, 500)
 }
 
 let tpLoadingTar = {
-  update,
-  error
+  start,
+  error,
+  finish
 }
 
 export default tpLoadingTar

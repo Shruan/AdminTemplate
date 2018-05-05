@@ -1,6 +1,6 @@
 <template lang="html">
   <transition name="fade">
-    <div class="shy__loading-bar-box">
+    <div class="shy__loading-bar-box" v-show="isShow">
       <div class="shy__loading-bar-inner"
         :class="innerClasses"
         :style="styles"
@@ -23,6 +23,10 @@ export default {
     status: {
       type: String,
       default: 'success'
+    },
+    isShow: {
+      type: Boolean,
+      required: true
     },
     color: {
       type: String
