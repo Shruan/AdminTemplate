@@ -8,33 +8,21 @@ import store from './store/index.js'
 import axios from 'axios'
 import 'element-ui/lib/theme-chalk/index.css'
 
+import TpComponents from '@/components'
+Vue.use(TpComponents)
+
 Vue.use(ElementUI)
-Vue.directive('myfocus', {
-  // 当绑定的元素插入到DOM ...
-  insert: function (el, {value}) {
-    // 聚焦元素
-    if (value) {
-      el.focus()
-    }
-  }
-})
 
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
 Vue.prototype.apiUrl = 'http://www.ehpat.com'
-Vue.prototype.setUser = (user) => {
-  store.commit('user', user)
-}
 
-Vue.prototype.getUser = () => {
-  return store.state.user
-}
-Vue.prototype.setProgressMsg = (importProgress) => {
-  store.commit('importProgress', importProgress)
-}
-Vue.prototype.getProgressMsg = (importProgress) => {
-  return store.state.importProgress
-}
+setTimeout(() => {
+  Vue.prototype.$tpLoadingTar.update()
+}, 5000)
+setTimeout(() => {
+  Vue.prototype.$tpLoadingTar.error()
+}, 6000)
 
 /* eslint-disable no-new */
 new Vue({

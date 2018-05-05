@@ -28,6 +28,9 @@ export default {
       type: String
     }
   },
+  data () {
+    return {}
+  },
   computed: {
     styles () {
       let style = {
