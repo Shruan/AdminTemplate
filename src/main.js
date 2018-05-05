@@ -18,11 +18,18 @@ Vue.prototype.$http = axios
 Vue.prototype.apiUrl = 'http://www.ehpat.com'
 
 setTimeout(() => {
-  Vue.prototype.$tpLoadingTar.update()
-}, 5000)
+  Vue.prototype.$tpLoadingTar.start()
+}, 1000)
 setTimeout(() => {
   Vue.prototype.$tpLoadingTar.error()
-}, 6000)
+}, 3000)
+
+setTimeout(() => {
+  Vue.prototype.$tpLoadingTar.start()
+}, 5000)
+setTimeout(() => {
+  Vue.prototype.$tpLoadingTar.finish()
+}, 10000)
 
 /* eslint-disable no-new */
 new Vue({
