@@ -5,4 +5,7 @@ const install = function (Vue, options) {
   Vue.prototype.$tpLoadingTar = TpLoadingBar
 }
 
-export default install
+export default {
+  install,
+  TpLoadingBar
+}
