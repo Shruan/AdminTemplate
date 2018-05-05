@@ -17,19 +17,20 @@ Vue.config.productionTip = false
 Vue.prototype.$http = axios
 Vue.prototype.apiUrl = 'http://www.ehpat.com'
 
-setTimeout(() => {
-  Vue.prototype.$tpLoadingTar.start()
-}, 1000)
-setTimeout(() => {
-  Vue.prototype.$tpLoadingTar.error()
-}, 3000)
+// 路由跳转触发组件 TpLoadingBar(加载进度条)
+router.beforeEach((to, from, next) => {
+  TpComponents.TpLoadingBar.start()
+  next()
+})
 
-setTimeout(() => {
-  Vue.prototype.$tpLoadingTar.start()
-}, 5000)
-setTimeout(() => {
-  Vue.prototype.$tpLoadingTar.finish()
-}, 10000)
+router.afterEach((to, from) => {
+  // 关闭加载进度条
+  if (!to.name || to.name === 'Error') {
+    TpComponents.TpLoadingBar.error()
+  } else {
+    TpComponents.TpLoadingBar.finish()
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({
