@@ -1,12 +1,17 @@
 <template>
   <div id="app" v-cloak>
     <!-- <img src="./assets/logo.png"> -->
+    <!-- <TpLoadingBar :percent="100" status="success"/> -->
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+// import TpLoadingBar from '@/components/TpLoadingBar'
 export default {
+  components: {
+    // TpLoadingBar
+  },
   name: 'app',
   data () {
     return {
