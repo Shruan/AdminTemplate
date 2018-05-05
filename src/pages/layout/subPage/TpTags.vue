@@ -9,15 +9,15 @@
         ref="tagsList"
         :style="`transform: translateX(${left}px);`">
         <el-tag
-          closable
           ref="tag"
           size="medium"
           color="#fff"
           class="shy__tags"
+          :closable="homeTag.routerName !== item.routerName"
           v-for="item in tagsList"
           :name="item.routerName"
           :key="item.routerName"
-          @close="closeTag"
+          @close="closeTag(item.routerName)"
           @click.native="$router.push({ name: item.routerName })"
           >
           <i class="tags-icon"
@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="tags-btn">
-      <el-dropdown trigger="click">
+      <el-dropdown trigger="click" @command="closeTag">
         <el-button
           type="primary"
           size="mini">
@@ -36,8 +36,8 @@
           <i class="el-icon-caret-bottom el-icon--right"/>
         </el-button>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>关闭所有</el-dropdown-item>
-          <el-dropdown-item>关闭其他</el-dropdown-item>
+          <el-dropdown-item command="closeAll">关闭所有</el-dropdown-item>
+          <el-dropdown-item command="closeOthers">关闭其他</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -48,8 +48,6 @@
 
 import { mapState, mapMutations, mapActions } from 'vuex'
 export default {
-  components: {
-  },
   data () {
     return {
       left: 0
@@ -60,7 +58,8 @@ export default {
       'user',
       'isCollapse',
       'tagsList',
-      'tag'
+      'tag',
+      'homeTag'
     ])
   },
   watch: {
@@ -69,6 +68,11 @@ export default {
         // 添加tag标签
         this._AddTag(to)
         this.moveToCurrentTag()
+      }
+    },
+    tag (val) {
+      if (this.$route.name !== val) {
+        setTimeout(() => { this.$router.push({ name: this.tag }) }, 100)
       }
     }
   },
@@ -80,11 +84,19 @@ export default {
       '_user'
     ]),
     ...mapActions('globalModule', [
-      '_AddTag'
+      '_AddTag',
+      '_CloseTag',
+      '_CloseAllTags',
+      '_CloseOtherTags'
     ]),
-    addTag () {
-    },
-    closeTag (val) {
+    closeTag (name) {
+      if (name === 'closeAll') {
+        this._CloseAllTags()
+      } else if (name === 'closeOthers') {
+        this._CloseOtherTags()
+      } else {
+        this._CloseTag(name)
+      }
     },
     // tag鼠标滚动事件
     handleScroll (e) {
