@@ -1,6 +1,6 @@
 <template lang="html">
   <transition name="fade">
-    <div class="shy__loading-bar-box" v-show="isShow">
+    <div class="shy__loading-bar" v-show="isShow">
       <div class="shy__loading-bar-inner"
         :class="innerClasses"
         :style="styles"
@@ -30,6 +30,9 @@ export default {
     },
     color: {
       type: String
+    },
+    failedColor: {
+      type: String
     }
   },
   data () {
@@ -40,9 +43,14 @@ export default {
       let style = {
         width: `${this.percent}%`
       }
-      if (this.status !== 'success' && this.status !== 'error') {
+      if (this.status === 'success' && this.color && this.color !== 'success' && this.color !== 'error') {
         style.backgroundColor = this.color
       }
+
+      if (this.status === 'error' && this.failedColor && this.failedColor !== 'success' && this.failedColor !== 'error') {
+        style.backgroundColor = this.failedColor
+      }
+
       return style
     },
     innerClasses () {
@@ -56,7 +64,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-  .shy__loading-bar-box {
+  .shy__loading-bar {
     position: fixed;
     top: 0;
     left: 0;

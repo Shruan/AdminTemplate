@@ -1,13 +1,14 @@
 import TpLoadingBar from './TpLoadingBar'
 import Vue from 'vue'
 
-const _data = { percent: 0, status: 'success', isShow: false }
+const _config = { percent: 0, status: 'success', isShow: false, failedcolor: 'error' }
 let time
+
 const Instance = new Vue({
-  data: _data,
+  data: _config,
   render (h) {
     return h(TpLoadingBar, {
-      props: _data
+      props: _config
     })
   }
 })
@@ -23,14 +24,18 @@ function update (data) {
 }
 
 function hide () {
-  let data = _data
+  let data = _config
   data.isShow = false
   update(data)
 }
 
+const destroy = function () {
+  document.body.removeChild(document.getElementsByClassName('shy__loading-bar')[0])
+}
+
 const start = function () {
   if (time) clearInterval(time)
-  let data = _data
+  let data = _config
   data.percent = 0
   data.status = 'success'
   data.isShow = true
@@ -49,14 +54,25 @@ const finish = function () {
 
 const error = function () {
   if (time) clearInterval(time)
-  update({ percent: 100, status: 'error' })
+  update({ percent: 100, status: 'error', failedColor: _config.failedColor })
   setTimeout(() => { hide() }, 500)
+}
+
+const config = function (config) {
+  if (config.color) {
+    _config.color = config.color
+  }
+  if (config.failedColor) {
+    _config.failedColor = config.failedColor
+  }
 }
 
 let tpLoadingTar = {
   start,
   error,
-  finish
+  finish,
+  destroy,
+  config
 }
 
 export default tpLoadingTar
