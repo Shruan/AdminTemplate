@@ -50,7 +50,16 @@ export default {
   .shy__full-card {
     min-height: 100%;
   }
-  .block {
-    margin: 20px 0;
+
+  /* 旋转动画 */
+  .shy__rotating{
+    animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation
+  {
+    from { transform: rotate(0deg); }
+    50%  { transform: rotate(180deg); }
+    to   { transform: rotate(360deg); }
   }
 </style>
