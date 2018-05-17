@@ -14,21 +14,18 @@
 
       <template v-for="(item, index) in menuList">
         <el-menu-item
-          :key="index"
-          v-if="!item.children
-          && (isVip || ['MiniProgram'].indexOf(item.key) === -1)
-          && (!isVip || ['HomePage'].indexOf(item.key) === -1)"
+          v-if="!item.children && menuControll(item.key)"
           :index="item.url"
+          :key="index"
         >
           <i :class="item.icon" />
           <span slot="title">{{item.name}}</span>
         </el-menu-item>
+
         <el-submenu
-          :key="index"
-          v-else-if="item.children
-          && (isVip || ['MiniProgram'].indexOf(item.key) === -1)
-          && (!isVip || ['HomePage'].indexOf(item.key) === -1)"
-          :index="index + ''">
+          v-else-if="item.children && menuControll(item.key)"
+          :index="`${index}`"
+          :key="index">
           <template slot="title">
             <i :class="item.icon"></i>
             <span slot="title">{{item.name}}</span>
@@ -41,6 +38,7 @@
             <span slot="title">{{child.name}}</span>
           </el-menu-item>
         </el-submenu>
+
       </template>
 
     </el-menu>
@@ -68,6 +66,13 @@ export default {
     ])
   },
   methods: {
+    menuControll (routerName) {
+      if (this.isVip) {
+        return ['MiniProgram'].indexOf(routerName) === -1
+      } else {
+        return ['HomePage'].indexOf(routerName) === -1
+      }
+    },
     handleOpen (key, keyPath) {
       // console.log(key, keyPath)
     },
