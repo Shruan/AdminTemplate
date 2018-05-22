@@ -40,10 +40,10 @@ const start = function () {
   data.status = 'success'
   data.isShow = true
   time = setInterval(() => {
-    data.percent += 20
-    if (data.percent === 100) clearInterval(time)
+    data.percent += 5
+    if (data.percent === 95) clearInterval(time)
     update(data)
-  }, 800)
+  }, 500)
 }
 
 const finish = function () {
