@@ -112,7 +112,7 @@ export default {
   .shy__layout-nav {
     position: fixed;
     overflow: hidden;
-    z-index: 9999;
+    z-index: 999;
     width: 179px;
     overflow: hidden;
     /* -webkit-transition: all cubic-bezier(0.39, 0.58, 0.57, 1) 520ms; */
@@ -188,10 +188,10 @@ export default {
     opacity: 0;
   }
   .slide-right-enter {
-    transform: translateX(31px);
+    transform: translateX(-50px);
   }
   .slide-right-leave-active {
-    transform: translateX(-31px);
+    transform: translateX(50px);
   }
   /* 页面切换 动态效果 */
 
