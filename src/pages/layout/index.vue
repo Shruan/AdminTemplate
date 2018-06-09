@@ -10,7 +10,7 @@
         <h2 v-else class="shy__logo-icon logo-title">A</h2>
       </div>
       <!-- 菜单部分 -->
-      <TpMenu :pageStyle="pageMinHeight" />
+      <TpMenu :pageStyle="pageHeight" />
     </nav>
 
     <!-- 右侧布局 -->
@@ -48,7 +48,7 @@ export default {
   name: 'Layout',
   data () {
     return {
-      pageMinHeight: `min-height: ${window.innerHeight - 100}px;`,  // 计算页面最小高度
+      pageHeight: window.innerHeight - 100,  // 计算页面最小高度
       transitionName: 'slide-left',
       screenWidth: document.body.clientWidth  // 计算浏览器视口宽度
     }
@@ -71,7 +71,7 @@ export default {
     },
     screenWidth (val) {
       this._isMobile(val < 900 ? true : false)
-      this.pageMinHeight = `min-height: ${window.innerHeight - 100}px;`
+      this.pageHeight = window.innerHeight - 100
     }
   },
   mounted () {
@@ -182,7 +182,7 @@ export default {
   }
   /* 右滑 */
   .slide-right-enter-active, .slide-right-leave-active {
-    transition: all 1s;
+    transition: all .5s;
   }
   .slide-right-enter, .slide-right-leave-active {
     opacity: 0;
@@ -204,6 +204,11 @@ export default {
   }
   .el-table__body .el-table__expanded-cell {
     background: #fbfbfb;
+  }
+
+  /* tab超出不隐藏 */
+  .tabs-nohidden .el-tabs .el-tabs__content {
+    overflow: unset;
   }
 
   /* 媒体查询 适配手机端 */

@@ -1,5 +1,7 @@
 <template>
-  <div class="nav">
+  <div
+    class="nav"
+    :style="`height: ${pageStyle}px`">>
     <el-menu
       text-color="#fff"
       background-color="#334257"
@@ -8,7 +10,7 @@
       :router="true"
       :default-active="nowRoute"
       :collapse="isCollapse"
-      :style="pageStyle"
+      :style="`min-height: ${pageStyle}px`"
       @open="handleOpen"
       @close="handleClose">
 
@@ -50,7 +52,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'srn-menu',
   props: {
-    pageStyle: String
+    pageStyle: Number
   },
   data () {
     return {
@@ -95,5 +97,11 @@ export default {
   .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 179px!important;
     overflow: hidden;
+  }
+  .nav {
+    overflow-x: hidden;
+  }
+  .nav::-webkit-scrollbar {
+    display:none
   }
 </style>
