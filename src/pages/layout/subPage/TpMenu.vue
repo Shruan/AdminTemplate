@@ -17,7 +17,7 @@
       <template v-for="(item, index) in menuList">
         <el-menu-item
           v-if="!item.children && menuControll(item.key)"
-          :index="item.url"
+          :index="item.key"
           :key="index"
         >
           <i :class="item.icon" />
@@ -34,8 +34,8 @@
           </template>
           <el-menu-item
             v-for="child in item.children"
-            :key="child.url"
-            :index="child.url"
+            :key="child.key"
+            :index="child.key"
           >
             <span slot="title">{{child.name}}</span>
           </el-menu-item>
@@ -64,8 +64,14 @@ export default {
     ...mapState('globalModule', [
       'menuList',
       'user',
+      'tag',
       'isCollapse'
     ])
+  },
+  watch: {
+    tag (val) {
+      this.nowRoute = val
+    }
   },
   methods: {
     menuControll (routerName) {
