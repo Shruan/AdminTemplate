@@ -2,14 +2,17 @@ export default [
   {
     url: '/home/index',
     name: '个人中心',
-    icon: 'el-icon-menu'
+    icon: 'el-icon-menu',
+    key: 'UserIndex'
   },
   {
     name: '活动管理',
     icon: 'el-icon-date',
+    key: 'ActivityManage',
     children: [
       {
         url: '/activtyManage/myActivity',
+        key: 'MyActivity',
         name: '我发起的活动'
       }
     ]
@@ -17,40 +20,17 @@ export default [
   {
     name: '投票管理',
     icon: 'el-icon-edit',
+    key: 'VotesManage',
     children: [
       {
         url: '/home/createVotes',
+        key: 'CreateVotes',
         name: '发起投票'
       },
       {
         url: '/home/myVotes',
+        key: 'MyVotes',
         name: '我发起的投票'
-      }
-    ]
-  },
-  {
-    name: '个人主页',
-    icon: 'el-icon-picture',
-    key: 'HomePage',
-    children: [
-      {
-        url: '/home/editSlide',
-        name: '设置个人主页'
-      }
-    ]
-  },
-  {
-    name: '小程序　',
-    icon: 'el-icon-message',
-    key: 'MiniProgram',
-    children: [
-      {
-        url: '/home/messageUse',
-        name: '管理'
-      },
-      {
-        url: '/home/editSlide',
-        name: '设置个人主页'
       }
     ]
   },
@@ -62,6 +42,7 @@ export default [
   },
   {
     url: '/home/userInfo',
+    key: 'UserInfo',
     name: '系统信息',
     icon: 'el-icon-setting'
   }
