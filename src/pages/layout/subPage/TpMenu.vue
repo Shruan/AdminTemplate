@@ -82,6 +82,7 @@ export default {
       if (['HomePage'].indexOf(routerName) !== -1) {
         return !this.isVip
       }
+      return true
     },
     handleOpen (key, keyPath) {
       // console.log(key, keyPath)
