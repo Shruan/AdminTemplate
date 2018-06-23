@@ -33,6 +33,7 @@
             <span slot="title">{{item.name}}</span>
           </template>
           <el-menu-item
+            v-if="menuControll(child.key)"
             v-for="child in item.children"
             :key="child.key"
             :index="child.key"
@@ -75,10 +76,11 @@ export default {
   },
   methods: {
     menuControll (routerName) {
-      if (this.isVip) {
-        return ['MiniProgram'].indexOf(routerName) === -1
-      } else {
-        return ['HomePage'].indexOf(routerName) === -1
+      if (['MiniProgram'].indexOf(routerName) !== -1) {
+        return this.isVip
+      }
+      if (['HomePage'].indexOf(routerName) !== -1) {
+        return !this.isVip
       }
     },
     handleOpen (key, keyPath) {
