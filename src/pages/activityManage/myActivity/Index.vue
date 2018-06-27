@@ -433,7 +433,7 @@ import ActivityDetailDialog from './subPage/ActivityDetailDialog'
 import BatchSetDialog from './subPage/BatchSetDialog'
 import { patentTypeList, patentStatusList } from '@/assets/globalData'
 import { mapState } from 'vuex'
-import { getActivityList } from '@/api/model/myActivity'
+import { getActivityList } from '@/api/model'
 export default {
   components: {
     ActivityDetailDialog,
