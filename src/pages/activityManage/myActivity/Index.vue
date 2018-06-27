@@ -433,6 +433,7 @@ import ActivityDetailDialog from './subPage/ActivityDetailDialog'
 import BatchSetDialog from './subPage/BatchSetDialog'
 import { patentTypeList, patentStatusList } from '@/assets/globalData'
 import { mapState } from 'vuex'
+import { getActivityList } from '@/api/model/myActivity'
 export default {
   components: {
     ActivityDetailDialog,
@@ -534,25 +535,16 @@ export default {
     this.patentList = tableData
     let height = window.innerHeight
     this.pageStyle = 'min-height:' + (height - 100) + 'px;'
-    // if (!this.user.id) {
-    //   this.$message.error('请登录后再试')
-    //   this.$router.push({path: '/login'})
-    // }
-    // if (window.localStorage.ehpat_index_pageSize) {
-    //   this.pageSize = window.localStorage.ehpat_index_pageSize
-    // }
-    // this.loadList()
   },
   methods: {
     loadList () {
-      let url = this.apiUrl + '/patent/adminlist/' + this.page + '/' + this.pageSize
-      let header = {
-        'X-TOKEN': this.user.token,
-        'X-USER-ID': this.user.id
+      this.loading = true
+      let data = {
+        page: this.page,
+        pageSize: this.pageSize
       }
-      this.$http.get(url, {headers: header}).then(res => {
-        res = res.data
-        if (res) {
+      getActivityList(data).then(res => {
+        if (res.code === 1000) {
           let patentList = res.data
           patentList.forEach((value, key, arr) => {
             arr[key].is_sellEdit = false
@@ -563,8 +555,6 @@ export default {
           this.dataTotal = res.total
         }
         this.loading = false
-      }).catch(() => {
-        this.$message.error('网络错误，请稍后再试')
       })
     },
     // 分页
