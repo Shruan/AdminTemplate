@@ -2,17 +2,18 @@
   <div class="home-index">
     <el-card shadow="hover" class="shy__full-card">
       <div slot="header" class="clearfix">
-        <span>个人中心</span>
+        <span>多筛选条件列表</span>
         <el-button style="float: right; padding: 3px 0" type="text">提示信息</el-button>
       </div>
+
       <div class="search-top">
         <div class="search-top-left">
           <el-input
             size="small"
             class="search-top-keyword"
-            placeholder="请输入要搜索的专利名关键字"
+            placeholder="请输入要搜索的关键字"
             v-model="searchForm.name"
-            @keyup.enter.native="search"
+            @keyup.enter.native="page = 1, loadList()"
             >
             <i slot="suffix"
               class="el-input__icon el-icon-search"
@@ -24,12 +25,16 @@
             size="small"
             class="search-top-detail"
             style="margin-left: 15px;"
-            @click="isShowSearchForm = !isShowSearchForm"
-            >
-            筛选<i class="el-icon--right" :class="isShowSearchForm ? 'el-icon-minus' : 'el-icon-plus'"/>
+            @click="isShowSearchForm = !isShowSearchForm">
+            筛选
+            <i class="el-icon--right"
+              :class="isShowSearchForm ? 'el-icon-minus' : 'el-icon-plus'"
+            />
           </el-button>
         </div>
-        <div class="search-top-right" v-if="!isMobile">
+
+        <div v-if="!isMobile"
+          class="search-top-right" >
           <!-- 筛选列 -->
           <el-popover
             ref="columnCheck"
@@ -44,6 +49,7 @@
                 全选
               </el-checkbox>
               <div style="margin: 15px 0;"></div>
+
               <el-checkbox-group v-model="columnChecked">
                 <el-checkbox
                   class="checkbox-style"
@@ -54,8 +60,10 @@
                   {{item.label}}
                 </el-checkbox>
               </el-checkbox-group>
+
             </div>
           </el-popover>
+
           <el-button v-popover:columnCheck
             size="small">
             筛选列<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -73,19 +81,16 @@
           <!-- 更多操作 -->
           <el-dropdown
             trigger="click"
-            @command="dropdownOpertion"
-            >
+            @command="dropdownOpertion">
             <el-button
               size="small">
               更多<i class="el-icon-caret-bottom el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="export">导出检索结果</el-dropdown-item>
-              <el-dropdown-item command="guozi">国知局采集</el-dropdown-item>
-              <el-dropdown-item command="soopat">SOOPAT采集</el-dropdown-item>
               <el-dropdown-item command="dialog">弹窗</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
+
         </div>
       </div>
 
@@ -110,62 +115,16 @@
             />
           </el-form-item>
 
-          <el-form-item label="专利号">
-            <el-input
-              class="search-select"
-              size="small"
-              v-model="searchForm.code"
-              placeholder="请输入专利号"
-            />
-          </el-form-item>
-
           <el-form-item label="录入时间">
             <el-date-picker
               size="small"
               type="daterange"
               format="yyyy-MM-dd"
               class="search-select"
-              v-model="searchForm.add_time"
+              v-model="searchForm.time"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               placeholder="选择日期范围"
-            />
-          </el-form-item>
-
-          <el-form-item label="是否可售">
-            <el-radio-group v-model="searchForm.isSell">
-              <el-radio label="10">是</el-radio>
-              <el-radio label="20">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-
-          <el-form-item label="供应商">
-            <el-select
-              class="search-select"
-              size="small"
-              v-model="searchForm.supplier_id"
-              clearable
-              placeholder="请选择供应商"
-            >
-              <el-option
-                :label="item.name"
-                :value="item.id"
-                :key="item.id"
-                v-for="item in supplierList"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="更新时间">
-            <el-date-picker
-              size="small"
-              type="daterange"
-              format="yyyy-MM-dd"
-              class="search-select"
-              placeholder="选择日期范围"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              v-model="searchForm.update_time"
             />
           </el-form-item>
 
@@ -174,7 +133,7 @@
               clearable
               size="small"
               class="search-select"
-              v-model="searchForm.patentType"
+              v-model="searchForm.type"
               placeholder="请选择专利类型"
               >
               <el-option
@@ -195,22 +154,6 @@
             </el-radio-group>
           </el-form-item>
 
-          <el-form-item label="法律状态">
-            <el-select
-              class="search-select"
-              size="small"
-              v-model="searchForm.patentStatus"
-              clearable
-              placeholder="请选择法律状态"
-            >
-              <el-option
-                v-for="item in patentStatusList"
-                :key="item.value"
-                :value="item.value"
-                :label="item.name"
-              />
-            </el-select>
-          </el-form-item>
           <el-form-item>
             <el-button
               size="small"
@@ -234,9 +177,9 @@
         style="width: 100%"
         v-loading="loading"
         element-loading-text="加载中,请稍后"
-        :data="patentList"
-        @select="hasSelectData = $event"
-        @select-all="hasSelectData = $event"
+        :data="tableList"
+        @select="selection = $event"
+        @select-all="selection = $event"
       >
         <el-table-column
           v-if="!isMobile"
@@ -247,8 +190,7 @@
         <el-table-column
           prop="code"
           label="专利号"
-          :width="isMobile ? '' : '80px'"
-          fixed="left"
+          :fixed="!isMobile ? 'left' : false"
           align="center"
         />
         <el-table-column
@@ -266,23 +208,6 @@
           width="95"
         />
         <el-table-column
-          v-if="columnChecked.indexOf('get_certify') !== -1"
-          prop="get_certify"
-          label="是否下证"
-          align="center"
-          width="95">
-          <template slot-scope="scope">
-            {{scope.row.get_certify === 10 ? '是' : '否'}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          v-if="columnChecked.indexOf('status') !== -1"
-          prop="status"
-          label="法律状态"
-          align="center"
-          width="150"
-        />
-        <el-table-column
           v-if="columnChecked.indexOf('changed') !== -1"
           prop="changed"
           label="变更记录"
@@ -296,20 +221,18 @@
           align="center"
           width="70">
           <template slot-scope="scope">
-            <el-button size="small" type="text" @click="useSupplierMsg(scope.row)">明细</el-button>
+            <el-button
+              size="small"
+              type="text"
+              @click="useSupplierMsg(scope.row)">
+              明细
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column
           v-if="columnChecked.indexOf('add_time') !== -1"
           prop="add_time"
           label="录入时间"
-          align="center"
-          width="180"
-        />
-        <el-table-column
-          v-if="columnChecked.indexOf('update_time') !== -1"
-          prop="update_time"
-          label="国知局采集时间"
           align="center"
           width="180"
         />
@@ -321,6 +244,7 @@
         <el-table-column
           label="操作"
           align="center"
+          :fixed="!isMobile ? 'right' : false"
           width="180">
           <template slot-scope="scope">
             <el-button
@@ -371,7 +295,7 @@
 <script>
 import { mapState } from 'vuex'
 import { getActivityList } from '@/api'
-import { patentTypeList, patentStatusList } from '@/assets/globalData'
+import { patentTypeList } from '@/assets/globalData'
 import ActivityDetailDialog from './subPage/ActivityDetailDialog'
 import BatchSetDialog from './subPage/BatchSetDialog'
 
@@ -386,15 +310,13 @@ export default {
       pageSize: 20,
       loading: true,
       dataTotal: 0,
+      tableList: [],
+      selection: [],
+      selectIds: [],
       patentTypeList,
-      patentStatusList,
       isShowActivityDetailDialog: false, // 详情弹窗
-      isShowAddSelect: false,
       isShowBatchSetDialog: false,
       isColumnCheckAll: false,
-      hasSelectData: [],
-      selectIds: [],
-      patentList: [],
       isShowSearchForm: false,
       isSeach: false,
       useSupplierList: [],
@@ -421,13 +343,8 @@ export default {
       ],
       searchForm: {
         name: '',
-        code: '',
-        add_time: '',
-        isSell: '',
-        supplier_id: '',
-        update_time: '',
-        patentType: '',
-        patentStatus: '',
+        time: '',
+        type: '',
         isRecord: ''
       }
     }
@@ -463,21 +380,27 @@ export default {
     }
   },
   created () {
-    let tableData = []
-    for (var i = 0; i < 10; i++) {
-      let obj = {
-        keyword: '测试' + i
-      }
-      tableData.push(obj)
-    }
-    this.columnChecked = this.columnCheckList.map(item => {
-      return item.key
-    })
-    this.patentList = tableData
+    this.getData()
     let height = window.innerHeight
     this.pageStyle = 'min-height:' + (height - 100) + 'px;'
   },
   methods: {
+    // 假数据
+    getData () {
+      let tableData = []
+      for (var i = 0; i < 10; i++) {
+        let obj = {
+          keyword: '测试' + i
+        }
+        tableData.push(obj)
+      }
+      this.columnChecked = this.columnCheckList.map(item => {
+        return item.key
+      })
+      this.tableList = tableData
+      this.loading = false
+    },
+    // 获取列表数据
     loadList () {
       this.loading = true
       let data = {
@@ -486,13 +409,13 @@ export default {
       }
       getActivityList(data).then(res => {
         if (res.code === 1000) {
-          let patentList = res.data
-          patentList.forEach((value, key, arr) => {
+          let tableList = res.data
+          tableList.forEach((value, key, arr) => {
             arr[key].is_sellEdit = false
             arr[key].cost_priceEdit = false
             arr[key].changedName = arr[key].changed === 10 ? '有' : '没有'
           })
-          this.patentList = patentList
+          this.tableList = tableList
           this.dataTotal = res.total
         }
         this.loading = false
@@ -533,14 +456,14 @@ export default {
     },
     // 批量操作
     batchOperation () {
-      if (this.hasSelectData.length < 1) {
+      if (this.selection.length < 1) {
         this.$message.error('请至少选中一个专利再执行操作')
         return false
       }
-      this.selectIds = this.hasSelectData.map(item => item.id)
+      this.selectIds = this.selection.map(item => item.id)
       this.isShowBatchSetDialog = true
     },
-    useSupplierMsg (getData) {}
+    useSupplierMsg (data) {}
   }
 }
 </script>
