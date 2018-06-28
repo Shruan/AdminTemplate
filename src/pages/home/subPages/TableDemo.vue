@@ -58,7 +58,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { getHomeTableList } from '@/api'
+// import { getHomeTableList } from '@/api'
 export default {
   props: {
     progress: {
