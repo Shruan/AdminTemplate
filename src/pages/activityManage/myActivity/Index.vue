@@ -278,9 +278,6 @@
           label="专利名称"
           align="center"
           minWidth="300">
-          <template slot-scope="scope">
-            <a :href="apiUrl + '/detail/' + scope.row.code" target="-_blank">{{scope.row.title}}</a>
-          </template>
         </el-table-column>
         <el-table-column
           v-if="columnChecked.indexOf('type') !== -1"
@@ -429,11 +426,12 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { getActivityList } from '@/api'
+import { patentTypeList, patentStatusList } from '@/assets/globalData'
 import ActivityDetailDialog from './subPage/ActivityDetailDialog'
 import BatchSetDialog from './subPage/BatchSetDialog'
-import { patentTypeList, patentStatusList } from '@/assets/globalData'
-import { mapState } from 'vuex'
-import { getActivityList } from '@/api/model'
+
 export default {
   components: {
     ActivityDetailDialog,
@@ -522,6 +520,7 @@ export default {
     }
   },
   created () {
+    console.log(getActivityList)
     let tableData = []
     for (var i = 0; i < 10; i++) {
       let obj = {

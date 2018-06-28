@@ -140,7 +140,7 @@ export default {
   }
   .shy__logo {
     width: 100%;
-    background: #334257;
+    background: #333;
     height: 100px;
     text-align: center;
     border-right: 1px solid #fff;

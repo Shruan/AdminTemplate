@@ -1,16 +1,15 @@
 <template>
-  <div
-    class="nav"
-    :style="`height: ${pageStyle}px`">>
+  <div class="nav"
+    :style="`height: ${pageStyle}px`">
     <el-menu
       text-color="#fff"
-      background-color="#334257"
+      background-color="#333"
       active-text-color="#ffd04b"
       class="el-menu-vertical-demo"
-      :router="true"
+      :style="`min-height: ${pageStyle}px`"
       :default-active="nowRoute"
       :collapse="isCollapse"
-      :style="`min-height: ${pageStyle}px`"
+      @select="selectMenu"
       @open="handleOpen"
       @close="handleClose">
 
@@ -18,8 +17,7 @@
         <el-menu-item
           v-if="!item.children && menuControll(item.key)"
           :index="item.key"
-          :key="index"
-        >
+          :key="index">
           <i :class="item.icon" />
           <span slot="title">{{item.name}}</span>
         </el-menu-item>
@@ -36,8 +34,7 @@
             v-if="menuControll(child.key)"
             v-for="child in item.children"
             :key="child.key"
-            :index="child.key"
-          >
+            :index="child.key">
             <span slot="title">{{child.name}}</span>
           </el-menu-item>
         </el-submenu>
@@ -83,6 +80,9 @@ export default {
         return !this.isVip
       }
       return true
+    },
+    selectMenu (val) {
+      this.$router.push({ name: val })
     },
     handleOpen (key, keyPath) {
       // console.log(key, keyPath)
