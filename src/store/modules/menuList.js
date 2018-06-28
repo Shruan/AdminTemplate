@@ -3,7 +3,7 @@ export default [
     url: '/home/index',
     name: '个人中心',
     icon: 'el-icon-menu',
-    key: 'UserIndex'
+    key: 'Home'
   },
   {
     name: '活动管理',
