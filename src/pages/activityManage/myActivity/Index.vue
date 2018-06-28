@@ -158,7 +158,7 @@
             <el-button
               size="small"
               type="primary"
-              @click="search">
+              @click="page = 1, loadList()">
               搜索
             </el-button>
             <el-button
@@ -254,25 +254,46 @@
               @click="useSupplierMsg(scope.row)">
               查看
             </el-button>
-            <el-button
-              plain
-              size="mini"
-              type="danger"
-              @click="useSupplierMsg(scope.row)">
-              删除
-            </el-button>
+            <el-popover
+              v-model="deleteVisible[scope.$index]"
+              placement="top"
+              width="100">
+              <p style="font-size: 13px">确定删除该条记录吗？</p>
+              <div style="text-align: right; margin: 10px 0 0">
+                <el-button
+                  size="mini"
+                  type="text"
+                  @click="deleteVisible[scope.$index] = false">
+                  取消
+                </el-button>
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="deleteRow(scope.row, scope.$index), deleteVisible[scope.$index] = false">
+                  确定
+                </el-button>
+              </div>
+              <el-button
+                plain
+                size="mini"
+                type="danger"
+                slot="reference"
+                @click="deleteVisible[scope.$index] = true">
+                删除
+              </el-button>
+            </el-popover>
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
       <div class="block">
         <el-pagination
-          @current-change="changePage"
-          @size-change="pageSizeChange"
-          :page-size="Number(pageSize)"
           layout="sizes, total, prev, pager, next"
+          :page-size="Number(pageSize)"
           :page-sizes="[10, 20, 30, 50, 100, 200, 300, 500, 1000]"
           :total="Number(dataTotal)"
+          @current-change="changePage"
+          @size-change="pageSizeChange"
         />
       </div>
     </el-card>
@@ -314,6 +335,7 @@ export default {
       selection: [],
       selectIds: [],
       patentTypeList,
+      deleteVisible: {},
       isShowActivityDetailDialog: false, // 详情弹窗
       isShowBatchSetDialog: false,
       isColumnCheckAll: false,
@@ -463,7 +485,8 @@ export default {
       this.selectIds = this.selection.map(item => item.id)
       this.isShowBatchSetDialog = true
     },
-    useSupplierMsg (data) {}
+    useSupplierMsg (data) {},
+    deleteRow () {}
   }
 }
 </script>

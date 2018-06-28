@@ -6,14 +6,14 @@ export default [
     key: 'Home'
   },
   {
-    name: '活动管理',
+    name: '列表页面管理',
     icon: 'el-icon-date',
     key: 'ActivityManage',
     children: [
       {
         url: '/activtyManage/myActivity',
         key: 'MyActivity',
-        name: '我发起的活动'
+        name: '列表页面'
       }
     ]
   },

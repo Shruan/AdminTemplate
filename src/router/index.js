@@ -5,7 +5,7 @@ import Login from '@/pages/Login'
 // 布局
 import Layout from '@/pages/layout'
 
-import Home from '@/pages/home' // 首页
+import Home from '@/pages/home/index' // 首页
 import ActivtyManage from './activityManage' // 活动管理页面
 
 Vue.use(Router)
