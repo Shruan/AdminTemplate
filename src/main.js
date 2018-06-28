@@ -5,7 +5,7 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import store from './store/index.js'
-import http from './utils/request'
+import http from './api/request'
 import 'element-ui/lib/theme-chalk/index.css'
 
 import TpComponents from '@/components'
