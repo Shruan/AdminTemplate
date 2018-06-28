@@ -31,7 +31,62 @@ export default new Router({
           component: Home,
           name: 'Home',
           meta: {
-            title: '个人主页'
+            title: '个人主页',
+            tag: true
+          }
+        },
+        {
+          path: '/home/createVotes',
+          component: Home,
+          name: 'CcreateVotes',
+          meta: {
+            title: '发起投票',
+            tag: true
+          }
+        },
+        {
+          path: '/home/myVotes',
+          component: Home,
+          name: 'MyVotes',
+          meta: {
+            title: '我发起的投票',
+            tag: true
+          }
+        },
+        {
+          path: '/home/editSlide',
+          component: Home,
+          name: 'EditSlide',
+          meta: {
+            title: '设置个人主页',
+            tag: true
+          }
+        },
+        {
+          path: '/home/messageUse',
+          component: Home,
+          name: 'MessageUse',
+          meta: {
+            title: '管理',
+            tag: true
+          }
+        },
+        {
+          path: '/home/productCenter',
+          component: Home,
+          name: 'ProductCenter',
+          meta: {
+            title: '产品中心',
+            tag: true
+          }
+        },
+        {
+          path: '/home/userInfo',
+          component: Home,
+          name: 'UserInfo',
+          meta: {
+            title: '系统信息',
+            tag: true
           }
         }
       ]
