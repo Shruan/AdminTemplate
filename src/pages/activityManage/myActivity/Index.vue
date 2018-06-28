@@ -16,7 +16,7 @@
             >
             <i slot="suffix"
               class="el-input__icon el-icon-search"
-              @click="search"
+              @click="page = 1, loadList()"
             />
           </el-input>
           <el-button
@@ -30,24 +30,6 @@
           </el-button>
         </div>
         <div class="search-top-right" v-if="!isMobile">
-          <!-- <el-button
-            size="small"
-            type="primary"
-          >
-            <a :href="apiUrl + '/patent/adminlist/excel?title=' + searchForm.name
-             + '&code=' + searchForm.code
-              + '&supplier_id=' + searchForm.supplier_id
-               + '&type=' + searchForm.patentType
-                + '&changed=' + searchForm.isRecord
-                 + '&status=' + searchForm.patentStatus
-                  + '&add_time_s=' + (searchForm.add_time[0] ? searchForm.add_time[0] : '')
-                   + '&add_time_e=' + (searchForm.add_time[1] ? searchForm.add_time[1] : '')
-                    + '&update_time_s=' + (searchForm.update_time[0] ? searchForm.update_time[0] : '')
-                     + '&update_time_e=' + (searchForm.update_time[1] ? searchForm.update_time[1] : '')
-                      + '&is_sell=' + searchForm.isSell"
-                      target="_blank"><font color="#fff">导出检索结果</font></a>
-          </el-button> -->
-
           <!-- 筛选列 -->
           <el-popover
             ref="columnCheck"
@@ -104,8 +86,6 @@
               <el-dropdown-item command="dialog">弹窗</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <!-- <el-button size="small" @click="collectionType('gzj')">国知局采集</el-button>
-          <el-button size="small" @click="collectionType('soopat')">SOOPAT采集</el-button> -->
         </div>
       </div>
 
@@ -257,7 +237,6 @@
         :data="patentList"
         @select="hasSelectData = $event"
         @select-all="hasSelectData = $event"
-        @cell-click="clickThisCell"
       >
         <el-table-column
           v-if="!isMobile"
@@ -294,42 +273,6 @@
           width="95">
           <template slot-scope="scope">
             {{scope.row.get_certify === 10 ? '是' : '否'}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          v-if="columnChecked.indexOf('is_sell') !== -1"
-          label="是否可售"
-          prop="is_sell"
-          align="center"
-          width="100">
-          <template slot-scope="scope">
-            <div v-if="!scope.row.is_sellEdit" style="cursor: pointer">
-              {{scope.row.is_sell}}
-            </div>
-            <el-select v-model="scope.row.is_sell"
-              @change="saveEdit(scope.row, 'is_sellEdit')"
-              v-else>
-              <el-option label="是" value="10"></el-option>
-              <el-option label="否" value="20"></el-option>
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column
-          v-if="columnChecked.indexOf('cost_price') !== -1"
-          prop="cost_price"
-          label="成本价"
-          align="center"
-          width="105">
-          <template slot-scope="scope">
-            <div v-if="!scope.row.cost_priceEdit" style="cursor: pointer">
-              {{scope.row.cost_price}}
-            </div>
-            <el-input v-else
-              id="input"
-              v-model="scope.row.cost_price"
-              placeholder="请输入内容"
-              @blur="saveEdit(scope.row)">
-            </el-input>
           </template>
         </el-table-column>
         <el-table-column
@@ -450,7 +393,7 @@ export default {
       isShowBatchSetDialog: false,
       isColumnCheckAll: false,
       hasSelectData: [],
-      selectDataId: [],
+      selectIds: [],
       patentList: [],
       isShowSearchForm: false,
       isSeach: false,
@@ -520,7 +463,6 @@ export default {
     }
   },
   created () {
-    console.log(getActivityList)
     let tableData = []
     for (var i = 0; i < 10; i++) {
       let obj = {
@@ -559,16 +501,11 @@ export default {
     // 分页
     pageSizeChange (val) {
       this.pageSize = val
-      window.localStorage.ehpat_index_pageSize = val
       this.loadList()
     },
     changePage (page) {
       this.page = page
-      if (this.isSeach) {
-        this.search()
-      } else {
-        this.loadList()
-      }
+      this.loadList()
     },
     // 重置表单
     resetSearchForm () {
@@ -594,148 +531,16 @@ export default {
         this.columnChecked = []
       }
     },
-    // confirm 提示确认
-    collectionType (val) {
-      let url = ''
-      let header = {
-        'X-TOKEN': this.user.token,
-        'X-USER-ID': this.user.id
-      }
-      this.$confirm('即将对100条专利到国知局数据采集，确认OR取消?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$http.get(url, {headers: header}).then(res => {
-          res = res.data
-          if (res.code === '1000') {
-            this.$message.success(res.msg)
-          }
-        }).catch(res => {
-          this.$message.error(res.msg)
-        })
-      }).catch(() => {
-        this.$message.info('已取消采集')
-      })
-    },
-    // 批量操作
-    saveAllEdit () {
-      if (!this.allEdit.isSell && !this.allEdit.cost_price && !this.allEdit.type) {
-        this.$message.error('至少执行一个批量操作')
-        return false
-      }
-      let url = this.apiUrl + '/patent/admin/edit/list'
-      let data = {
-        ids: this.selectDataId.join(',')
-      }
-      if (this.allEdit.isSell) {
-        data.is_sell = this.allEdit.isSell
-      }
-      if (this.allEdit.cost_price) {
-        data.cost_price = this.allEdit.cost_price
-      }
-      if (this.allEdit.type) {
-        data.type = this.allEdit.type
-      }
-      let header = {
-        'X-TOKEN': this.user.token,
-        'X-USER-ID': this.user.id
-      }
-      this.$http.post(url, data, {headers: header}).then(res => {
-        res = res.data
-        if (res) {
-          if (res.status === '1000') {
-            this.$message.success('修改成功')
-            this.loadList()
-            this.allEdit.isSell = this.allEdit.cost_price = this.allEdit.type = ''
-            this.isShowSelectEdit = false
-          } else {
-            this.$message.error(res.msg)
-          }
-        }
-      })
-    },
     // 批量操作
     batchOperation () {
       if (this.hasSelectData.length < 1) {
         this.$message.error('请至少选中一个专利再执行操作')
         return false
       }
-      this.allEdit.isSell = this.allEdit.cost_price = this.allEdit.type = ''
-      this.selectDataId = []
-      this.hasSelectData.forEach((value, key, arr) => {
-        this.selectDataId.push(arr[key].id)
-      })
+      this.selectIds = this.hasSelectData.map(item => item.id)
       this.isShowBatchSetDialog = true
     },
-    useSupplierMsg (getData) {},
-    saveEdit (getData, value) {
-      if (!getData.is_sell) {
-        this.$message.error('专利销售状态不能为空')
-        return false
-      } else if (getData.cost_price === '') {
-        this.$message.error('专利价格不能为空')
-        return false
-      }
-      let url = this.apiUrl + '/patent/admin/edit/' + getData.id
-      let data = {
-        is_sell: getData.is_sell,
-        cost_price: getData.cost_price
-      }
-      let header = {
-        'X-TOKEN': this.user.token,
-        'X-USER-ID': this.user.id
-      }
-      this.$http.post(url, data, {headers: header}).then(res => {
-        res = res.data
-        if (res) {
-          if (res.status === '1000') {
-            this.$message.success('修改成功')
-            if (value === 'is_sellEdit') {
-              getData.is_sellEdit = false
-            } else if (value === 'cost_priceEdit') {
-              getData.cost_priceEdit = false
-            }
-            if (this.isSeach) {
-              this.search()
-            } else {
-              this.loadList()
-            }
-          } else {
-            this.$message.error(res.msg)
-          }
-        }
-      }).catch(() => {
-        this.$message.error('网络错误，请稍后再试')
-      })
-    },
-    clickThisCell (data, index, $event) {
-      if (index.property === 'is_sell') {
-        this.patentList.forEach((value, key, arr) => {
-          arr[key].fullNameEdit = false
-          arr[key].abbreviationEdit = false
-          arr[key].followUserEdit = false
-          arr[key].is_sellEdit = false
-          arr[key].cost_priceEdit = false
-        })
-        data.is_sellEdit = true
-      } else if (index.property === 'cost_price') {
-        this.patentList.forEach((value, key, arr) => {
-          arr[key].fullNameEdit = false
-          arr[key].abbreviationEdit = false
-          arr[key].followUserEdit = false
-          arr[key].is_sellEdit = false
-          arr[key].cost_priceEdit = false
-        })
-        data.cost_priceEdit = true
-      }
-    },
-    search () {
-      this.loading = true
-      setTimeout(() => {
-        this.loading = false
-      }, 500)
-    }
+    useSupplierMsg (getData) {}
   }
 }
 </script>
