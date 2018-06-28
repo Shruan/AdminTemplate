@@ -7,7 +7,7 @@
       element-loading-text="加载中,请稍后"
       :data="tableList">
       <el-table-column
-        prop="activity"
+        prop="title"
         label="活动标题"
         width="160"
         :fixed="!isMobile ? 'left' : false"
@@ -84,12 +84,16 @@ export default {
   methods: {
     loadList () {
       this.loading = true
-      getHomeTableList({ id: this.user.id }).then(res => {
-        if (res) {
-          this.tableList = res.data
-        }
-        this.loading = false
-      })
+      // getHomeTableList({ id: this.user.id }).then(res => {
+      //   if (res) {
+      //     this.tableList = res.data
+      //   }
+      //   this.loading = false
+      // })
+      for (var i = 0; i < 8; i++) {
+        this.tableList.push({title: 'test' + i})
+      }
+      setTimeout(() => { this.loading = false }, 1000)
     }
   }
 }
