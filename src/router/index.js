@@ -6,6 +6,8 @@ import Login from '@/pages/Login'
 import Layout from '@/pages/layout'
 
 import Home from '@/pages/home/index' // 首页
+import WheelSurf from '@/pages/home/wheelSurf' // 首页
+
 import ActivtyManage from './activityManage' // 活动管理页面
 
 Vue.use(Router)
@@ -81,11 +83,11 @@ export default new Router({
           }
         },
         {
-          path: '/home/userInfo',
-          component: Home,
-          name: 'UserInfo',
+          path: '/home/wheelSurf',
+          component: WheelSurf,
+          name: 'WheelSurf',
           meta: {
-            title: '系统信息',
+            title: '转盘抽奖',
             tag: true
           }
         }

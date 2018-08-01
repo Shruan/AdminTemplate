@@ -41,9 +41,9 @@ export default [
     icon: 'el-icon-star-on'
   },
   {
-    url: '/home/userInfo',
-    key: 'UserInfo',
-    name: '系统信息',
+    url: '/home/wheelSurf',
+    key: 'WheelSurf',
+    name: '转盘抽奖',
     icon: 'el-icon-setting'
   }
 ]
