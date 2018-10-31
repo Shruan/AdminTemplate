@@ -57,14 +57,14 @@ export default {
   },
   mounted () {
     let arr = [
-      { name: '一等奖', color: '#BAE7FF' },
-      { name: '谢谢', color: '#BAF5C4' },
-      { name: '二等奖', color: '#7FC9FE' },
-      { name: '三等奖', color: '#71E3E3' },
-      { name: '谢谢', color: '#3ccba6' },
-      { name: '四等奖', color: '#ABF5F5' },
-      { name: '谢谢', color: '#666666' },
-      { name: '五等奖', color: '#8EE0A1' }
+      { name: '一等奖', color: '#ed655f' },
+      { name: '谢谢参与', color: '#ef8683' },
+      { name: '二等奖', color: '#ed655f' },
+      { name: '五等奖', color: '#ef8683' },
+      { name: '谢谢参与', color: '#ed655f' },
+      { name: '三等奖', color: '#ef8683' },
+      { name: '谢谢参与', color: '#ed655f' },
+      { name: '四等奖', color: '#ef8683' }
     ]
     let total = arr.length
     let canvas = document.querySelector('#wheelSurf')
@@ -79,14 +79,24 @@ export default {
       ctx.lineTo(150, 150)
       ctx.fillStyle = item.color
       ctx.fill()
-      ctx.closePath()
       ctx.stroke()
+      ctx.closePath()
       startAngle += 1 / total * 2 * Math.PI
       endAngle += 1 / total * 2 * Math.PI
     })
+    arr.forEach((item, index) => {
+      ctx.save()
+    	ctx.beginPath()
+      ctx.translate(150,150)
+      ctx.rotate(index * 2 * Math.PI / 8)
+      ctx.fillStyle = '#fff'
+      ctx.font = '14px Verdana'
+      ctx.fillText(item.name, -30, -95)
+      ctx.closePath()
+      ctx.restore()
+    })
   },
-  methods: {
-  }
+  methods: {}
 }
 </script>
 
