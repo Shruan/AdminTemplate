@@ -15,9 +15,9 @@ const mutations = {
 }
 
 const actions = {
-  [apiFn[ACCOUNT_USER_INFO]]({commit}, params) {
+  [apiFn.ACCOUNT_USER_INFO]({commit}, params) {
     // commit()
-    return api[apiFn[ACCOUNT_USER_INFO]]().then(res => {
+    return api[apiFn.ACCOUNT_USER_INFO]().then(res => {
       return res.data
     })
   }
