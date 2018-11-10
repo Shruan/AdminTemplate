@@ -1,8 +1,10 @@
-import request from '../request'
+import io from './io'
+import { apiFn } from '@/constant'
+import { api } from '@/constant'
 
-export function getActivityList (data) {
-  return request.get( // 获取列表
-    '/Api/patent/adminlist',
-    { params: data }
+export function apiFn[ACCOUNT_USER_INFO] (data, path = '') {
+  return io.get(
+    api[apiFn.ACCOUNT_USER_INFO] + path,
+    data
   )
 }

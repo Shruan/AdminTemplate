@@ -4,7 +4,7 @@ import router from '../router'
 
 const http = axios.create({
   baseURL: process.env.NODE_ENV === 'development' ? '/' : 'https://easy-mock.com/mock/5af01dd24a095174a7d86d1e',
-  timeout: 1000
+  timeout: 5000
 })
 // 请求过滤器
 http.interceptors.request.use(config => {
@@ -41,4 +41,20 @@ http.interceptors.response.use(res => {
   return Promise.reject(err)
 })
 
-export default http
+
+const io = {
+  get: (url, data) => {
+    return http.get(url, params: data)
+  },
+  delete: (url, data) => {
+    return http.delete(url, params: data)
+  },
+  post: (url, data) => {
+    return http.post(url, data)
+  },
+  put: (url, data) => {
+    return http.put(url, data)
+  }
+}
+
+export default io
